@@ -1,0 +1,107 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SeviceSmartHopitail.Datas;
+using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Schemas;
+
+namespace SeviceSmartHopitail.Services.Profiles
+{
+    public class UserProfileSevices
+    {
+        private readonly AppDbContext _db;
+        private readonly CloudinaryServices _cloudinary;
+        public UserProfileSevices(AppDbContext db, CloudinaryServices cloudinary)
+        {
+            _db = db;
+            _cloudinary = cloudinary;
+        }
+
+        public async Task<bool?> UpdatedAvatarAsync(int id, MemoryStream avatarStream, string fileName)
+        {
+            var profile = await _db.UserProfiles.FindAsync(id);
+            if (profile == null) return null;
+
+            // Upload ảnh lên Cloudinary
+            var avatarUrl = await _cloudinary.uploadImg(avatarStream, fileName, fileName);
+
+            if (!string.IsNullOrEmpty(avatarUrl))
+            {
+                profile.AvatarUrl = avatarUrl;
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
+        // Hàm độc lập để upload ảnh trả về URL
+        public async Task<string?> UploadAvatarAsync(MemoryStream avatarStream, string fileName)
+        {
+            var avatarUrl = await _cloudinary.uploadImg(avatarStream, fileName, fileName);
+            return avatarUrl;
+        }
+
+        // Lấy profile theo Id
+        public async Task<UserProfile?> GetByIdAsync(int id)
+        {
+            return await _db.UserProfiles
+                .Include(p => p.TaiKhoan)
+                .FirstOrDefaultAsync(p => p.HoSoId == id);
+        }
+
+        // Lấy profile theo tài khoản
+        public async Task<UserProfile?> GetByTaiKhoanIdAsync(int taiKhoanId)
+        {
+            return await _db.UserProfiles
+                .Include(p => p.TaiKhoan)
+                .FirstOrDefaultAsync(p => p.TaiKhoanId == taiKhoanId);
+        }
+
+        // Thêm mới hồ sơ
+        public async Task<UserProfile> CreateAsync(CreateUserProfile pf, MemoryStream avatarStream)
+        {
+            var profile = new UserProfile
+            {
+                TaiKhoanId = pf.TaiKhoanId,
+                FullName = pf.FullName,
+                Age = pf.Age,
+                Gender = pf.Gender,
+                Address = pf.Adress,
+                Height = pf.Height,
+                Weight = pf.Weight,
+                Check = true
+            };
+            profile.AvatarUrl = await UploadAvatarAsync(avatarStream, profile.FullName ?? "avarta" + profile.HoSoId);
+            _db.UserProfiles.Add(profile);
+            await _db.SaveChangesAsync();
+            return profile;
+        }
+
+        // Cập nhật hồ sơ
+        public async Task<UserProfile?> UpdateAsync(CreateUserProfile profile, MemoryStream avatarStream, int HoSoId)
+        {
+            var existing = await _db.UserProfiles.FindAsync(HoSoId);
+            if (existing == null) return null;
+
+            // cập nhật từng field
+            existing.Age = profile.Age;
+            existing.Gender = profile.Gender;
+            existing.Height = profile.Height;
+            existing.Address = profile.Adress;
+            existing.Weight = profile.Weight;
+            existing.AvatarUrl = await UploadAvatarAsync(avatarStream, profile.FullName ?? "avarta" + HoSoId);
+            existing.Check = true;
+            await _db.SaveChangesAsync();
+            return existing;
+        }
+
+        // Xóa hồ sơ
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var profile = await _db.UserProfiles.FindAsync(id);
+            if (profile == null) return false;
+
+            _db.UserProfiles.Remove(profile);
+            await _db.SaveChangesAsync();
+            return true;
+        }
+    }
+}

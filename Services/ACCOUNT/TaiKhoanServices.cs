@@ -96,6 +96,25 @@ namespace SeviceSmartHopitail.Services
             Console.WriteLine("OTP mới đã gửi.");
         }
 
+        // ================== RESEND CAPCHA ==================
+        public void ResendCapcha(string email)
+        {
+            var user = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
+            if (user == null)
+            {
+                Console.WriteLine("Email không tồn tại.");
+                return;
+            }
+
+            string otp = _mailService.GenerateCaptcha();
+            user.OtpHash = _mailService.Hash(otp);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(5);
+            _db.SaveChanges();
+
+            _mailService.SendEmail(email, "CAPTCHA mới", $"CAPTCHA mới: {otp}\nHết hạn sau 5 phút.");
+            Console.WriteLine("OTP mới đã gửi.");
+        }
+
         // ================== FORGOT PASSWORD ==================
         public void ForgotPassword(string email)
         {
@@ -157,14 +176,16 @@ namespace SeviceSmartHopitail.Services
                 // So sánh password hash
                 if (user.PasswordHash != _mailService.Hash(password))
                     return new LoginReply(); // Sai mật khẩu
+                var iss = await _db.UserProfiles.Where(x => x.TaiKhoanId.Equals(user.Id)).Select(x => x.Check).FirstOrDefaultAsync();
 
-                
+
                 var ue = new LoginReply{
                     Id = user.Id,
                     Email = user.Email,
                     UserName = user.UserName,
                     Role = "user",
-                    Token = _jwt.GenerateToken(user.UserName, "user")
+                    Token = _jwt.GenerateToken(user.UserName, "user"),
+                    check = iss
                 };
                 rep = ue;
             }

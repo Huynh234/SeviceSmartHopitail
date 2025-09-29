@@ -38,6 +38,14 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(new { message = "OTP mới đã được gửi." });
         }
 
+        // ================== GỬI LẠI OTP ==================
+        [HttpPost("resend-captcha")]
+        public IActionResult ResendCaptcha([FromBody] ResendOtpRequest request)
+        {
+            _taiKhoanService.ResendCapcha(request.Email);
+            return Ok(new { message = "CHATCHA mới đã được gửi." });
+        }
+
         // ================== QUÊN MẬT KHẨU ==================
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword([FromBody] ForgotPasswordRequest request)

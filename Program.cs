@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
 });
 
 // --- Tiến trình chạy nền để tạo embeddings (chỉ cần nếu dữ liệu lớn)
-builder.Services.AddHostedService<EmbeddingBackgroundService>(); // cần tự implement class này nếu chưa có
+//builder.Services.AddHostedService<EmbeddingBackgroundService>(); // cần tự implement class này nếu chưa có
 
 // --- Scheduler gửi email tự động
 builder.Services.AddHostedService<ScheduledEmailService>();

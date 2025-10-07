@@ -7,10 +7,14 @@ namespace SeviceSmartHopitail.Services
 {
     public class CloudinaryServices
     {
-        private Cloudinary cloudinary = new Cloudinary(@"cloudinary://258271866169244:oLIbS35IyesuA-Vv3gTRPQxZhes@dm9tzekzx");
-        public async Task<string> uploadImg(MemoryStream memoryStream, string fileName, string fileNames)
+        private readonly Cloudinary cloudinary = new Cloudinary(
+            new Account("dm9tzekzx", "258271866169244", "oLIbS35IyesuA-Vv3gTRPQxZhes")
+        );
+
+        public async Task<string> UploadImg(MemoryStream memoryStream, string fileName)
         {
             cloudinary.Api.Secure = true;
+
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(fileName, memoryStream),
@@ -18,24 +22,17 @@ namespace SeviceSmartHopitail.Services
                 UniqueFilename = false,
                 Overwrite = true
             };
-            var uploadResult = await cloudinary.UploadAsync(uploadParams);
-            var getResourceParams = new GetResourceParams(fileNames)
-            {
-                QualityAnalysis = true
-            };
-            var getResourceResult = await cloudinary.GetResourceAsync(getResourceParams);
-            var resultJson = getResourceResult.JsonObj;
 
-            var qualityAnalysisJson = resultJson["quality_analysis"];
-            if (qualityAnalysisJson != null)
+            var uploadResult = await cloudinary.UploadAsync(uploadParams);
+
+            if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var asset = JsonConvert.DeserializeObject<CloudinaryImage>(resultJson.ToString());
-                Console.WriteLine(asset?.SecureUrl);
-                return asset?.SecureUrl ?? "";
+                Console.WriteLine($"Uploaded: {uploadResult.SecureUrl}");
+                return uploadResult.SecureUrl?.ToString() ?? "";
             }
             else
             {
-                Console.WriteLine("Error");
+                Console.WriteLine($"Upload failed: {uploadResult.Error?.Message}");
                 return "";
             }
         }

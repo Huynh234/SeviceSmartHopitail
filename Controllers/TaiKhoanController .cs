@@ -66,11 +66,11 @@ namespace SeviceSmartHopitail.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var  user = await _taiKhoanService.LoginAsync(request.Email, request.Password);
-            if (user.Token == null)
+            var  (user, Token)  = await _taiKhoanService.LoginAsync(request.Email, request.Password);
+            if (user == null || Token == null)
                 return Unauthorized(new { message = "Đăng nhập thất bại. Sai email/mật khẩu hoặc tài khoản chưa kích hoạt." });
 
-            return Ok(user);
+            return Ok(new { auth = user, token = Token });
         }
     }
 }

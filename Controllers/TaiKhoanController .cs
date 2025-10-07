@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SeviceSmartHopitail.Services;
+using Renci.SshNet.Messages;
 using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Services;
 namespace SeviceSmartHopitail.Controllers
 {
     [ApiController]
@@ -26,8 +27,14 @@ namespace SeviceSmartHopitail.Controllers
         [HttpPost("verify-otp")]
         public IActionResult VerifyOtp([FromBody] VerifyOtpRequest request)
         {
-            _taiKhoanService.VerifyOtp(request.Email, request.Otp);
-            return Ok(new { message = "Đã xác thực OTP." });
+            var (check , mess) = _taiKhoanService.VerifyOtp(request.Email, request.Otp);
+            if(check){
+                return Ok(new { message = mess });
+            }
+            else
+            {
+                return BadRequest(new { message = mess });
+            }
         }
 
         // ================== GỬI LẠI OTP ==================
@@ -51,22 +58,29 @@ namespace SeviceSmartHopitail.Controllers
         public IActionResult ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
             _taiKhoanService.ForgotPassword(request.Email);
-            return Ok(new { message = "OTP reset mật khẩu đã gửi." });
+            return Ok(new { message = "CAPTCHA reset mật khẩu đã gửi." });
         }
 
         // ================== ĐẶT LẠI MẬT KHẨU ==================
         [HttpPut("reset-password")]
         public IActionResult ResetPassword([FromBody] ResetPasswordRequest request)
         {
-            _taiKhoanService.ResetPassword(request.Email, request.Otp, request.NewPassword);
-            return Ok(new { message = "Đặt lại mật khẩu thành công." });
+            var (check, mess) = _taiKhoanService.ResetPassword(request.Email, request.Otp, request.NewPassword);
+            if (check == true)
+            {
+                return Ok(new { message = mess });
+            }
+            else
+            {
+                return BadRequest(new { message = mess });
+            }
         }
 
         // ================== ĐĂNG NHẬP ==================
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var  (user, Token)  = await _taiKhoanService.LoginAsync(request.Email, request.Password);
+            var (user, Token) = await _taiKhoanService.LoginAsync(request.Email, request.Password);
             if (user == null || Token == null)
                 return Unauthorized(new { message = "Đăng nhập thất bại. Sai email/mật khẩu hoặc tài khoản chưa kích hoạt." });
 

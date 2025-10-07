@@ -13,8 +13,8 @@ namespace SeviceSmartHopitail.Services.RAG
 
         public GeminiClientWrapper(IConfiguration configuration)
         {
-            //_apiKey = configuration["GEMINI_API_KEY"] ?? "AIzaSyBRpcZYy4zthsqctapxhUT97gZO75u1j3E";
-            _apiKey = "AIzaSyDUq4EMq3j9oH2TxjjP5EtfMFsplMP6LE8";
+            _apiKey = configuration["GEMINI_API_KEY"] ?? "AIzaSyBRpcZYy4zthsqctapxhUT97gZO75u1j3E";
+            //_apiKey = "AIzaSyDUq4EMq3j9oH2TxjjP5EtfMFsplMP6LE8";
             _httpClient = new HttpClient();
             _geminiClient = new GeminiClient(new GoogleGeminiConfig
             {

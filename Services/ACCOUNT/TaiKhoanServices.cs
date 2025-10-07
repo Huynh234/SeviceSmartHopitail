@@ -164,18 +164,19 @@ namespace SeviceSmartHopitail.Services
             }
         }
 
-        public async Task<LoginReply> LoginAsync(string email, string password)
+        public async Task<(LoginReply, string?)> LoginAsync(string email, string password)
         {
             var rep = new LoginReply();
+            string? Token = null;
             if (!email.Equals("adminLaAnhHuynh@gmail.com")){
                 var user = await _db.TaiKhoans.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user == null || user.Status != true)
-                    return new LoginReply(); // Không tồn tại hoặc chưa active
+                    return (new LoginReply(), string.Empty); // Không tồn tại hoặc chưa active
 
                 // So sánh password hash
                 if (user.PasswordHash != _mailService.Hash(password))
-                    return new LoginReply(); // Sai mật khẩu
+                    return (new LoginReply(), string.Empty); // Sai mật khẩu
                 var iss = await _db.UserProfiles.Where(x => x.TaiKhoanId.Equals(user.Id)).Select(x => x.Check).FirstOrDefaultAsync();
 
 
@@ -184,25 +185,30 @@ namespace SeviceSmartHopitail.Services
                     Email = user.Email,
                     UserName = user.UserName,
                     Role = "user",
-                    Token = _jwt.GenerateToken(user.UserName, "user"),
+                    
                     check = iss
                 };
+                Token = _jwt.GenerateToken(user.UserName, "user");
                 rep = ue;
             }
             else
             {
-                if (password.Equals("emAnhHuynh")) ;
-                var ue = new LoginReply
+                var ue = new LoginReply();
+                if (password.Equals("emAnhHuynh"))
                 {
-                    Id = 0,
-                    Email = "adminLaAnhHuynh@gmail.com",
-                    UserName = "EM la em anh Huynh",
-                    Role = "admin",
-                    Token = _jwt.GenerateToken("mai_la_em_anh_huynh", "admin")
-                };
+                   ue = new LoginReply
+                    {
+                        Id = 0,
+                        Email = "adminLaAnhHuynh@gmail.com",
+                        UserName = "EM la em anh Huynh",
+                        Role = "admin",
+                       
+                    };
+                    Token = _jwt.GenerateToken("mai_la_em_anh_huynh", "admin");
+                }
                 rep = ue;
             }
-            return rep;
+            return (rep, Token);
         }
 
     }

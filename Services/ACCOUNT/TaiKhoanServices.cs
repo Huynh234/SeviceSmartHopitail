@@ -48,19 +48,19 @@ namespace SeviceSmartHopitail.Services
         }
 
         // ================== VERIFY OTP ==================
-        public void VerifyOtp(string email, string inputOtp)
+        public (bool, string) VerifyOtp(string email, string inputOtp)
         {
             var user = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
             if (user == null)
             {
                 Console.WriteLine("Email không tồn tại.");
-                return;
+                return (false, "Email không tồn tại.");
             }
 
             if (user.OtpExpireAt < DateTime.Now)
             {
                 Console.WriteLine("OTP đã hết hạn.");
-                return;
+                return (false, "OTP đã hết hạn.");
             }
 
             if (user.OtpHash == _mailService.Hash(inputOtp))
@@ -70,10 +70,12 @@ namespace SeviceSmartHopitail.Services
                 user.OtpExpireAt = null;
                 _db.SaveChanges();
                 Console.WriteLine("Xác thực thành công.");
+                return (true, "Xác thực thành công.");
             }
             else
             {
                 Console.WriteLine("OTP không đúng.");
+                return (false, "OTP không đúng.");
             }
         }
 
@@ -108,7 +110,7 @@ namespace SeviceSmartHopitail.Services
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
-            user.OtpExpireAt = DateTime.Now.AddMinutes(5);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(2);
             _db.SaveChanges();
 
             _mailService.SendEmail(email, "CAPTCHA mới", $"CAPTCHA mới: {otp}\nHết hạn sau 5 phút.");
@@ -127,7 +129,7 @@ namespace SeviceSmartHopitail.Services
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
-            user.OtpExpireAt = DateTime.Now.AddMinutes(5);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(2);
             _db.SaveChanges();
 
             _mailService.SendEmail(email, "Quên mật khẩu", $"Mã CAPCHA xác thực reset mật khẩu: {otp}\nHết hạn sau 5 phút.");
@@ -135,19 +137,19 @@ namespace SeviceSmartHopitail.Services
         }
 
         // ================== RESET PASSWORD ==================
-        public void ResetPassword(string email, string inputOtp, string newPassword)
+        public (bool,string) ResetPassword(string email, string inputOtp, string newPassword)
         {
             var user = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
             if (user == null)
             {
                 Console.WriteLine("Email không tồn tại.");
-                return;
+                return (false, "Email không tồn tại.");
             }
 
             if (user.OtpExpireAt < DateTime.Now)
             {
                 Console.WriteLine("OTP đã hết hạn.");
-                return;
+                return (false, "OTP đã hết hạn.");
             }
 
             if (user.OtpHash == _mailService.Hash(inputOtp))
@@ -157,10 +159,12 @@ namespace SeviceSmartHopitail.Services
                 user.OtpExpireAt = null;
                 _db.SaveChanges();
                 Console.WriteLine("Đặt lại mật khẩu thành công.");
+                return( false, "Đặt lại mật khẩu thành công.");
             }
             else
             {
                 Console.WriteLine("OTP không đúng.");
+                return(false, "OTP không đúng");
             }
         }
 

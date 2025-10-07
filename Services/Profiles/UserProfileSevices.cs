@@ -21,7 +21,8 @@ namespace SeviceSmartHopitail.Services.Profiles
             if (profile == null) return null;
 
             // Upload ảnh lên Cloudinary
-            var avatarUrl = await _cloudinary.uploadImg(avatarStream, fileName, fileName);
+            var avatarUrl = await _cloudinary.UploadImg(avatarStream, fileName);
+            Console.WriteLine(avatarUrl);
 
             if (!string.IsNullOrEmpty(avatarUrl))
             {
@@ -35,7 +36,7 @@ namespace SeviceSmartHopitail.Services.Profiles
         // Hàm độc lập để upload ảnh trả về URL
         public async Task<string?> UploadAvatarAsync(MemoryStream avatarStream, string fileName)
         {
-            var avatarUrl = await _cloudinary.uploadImg(avatarStream, fileName, fileName);
+            var avatarUrl = await _cloudinary.UploadImg(avatarStream, fileName);
             return avatarUrl;
         }
 

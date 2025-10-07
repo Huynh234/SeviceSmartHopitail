@@ -68,7 +68,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // PATCH api/UserProfile/avatar/5
-        [HttpPut("avatar-updload/{id}")]
+        [HttpPatch("avatar-updload/{id}")]
         public async Task<IActionResult> UpdateAvatar(int id, IFormFile avatar)
         {
             if (avatar == null) return BadRequest(new { message = "Chưa chọn ảnh" });

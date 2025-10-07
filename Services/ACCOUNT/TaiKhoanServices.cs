@@ -110,7 +110,7 @@ namespace SeviceSmartHopitail.Services
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
-            user.OtpExpireAt = DateTime.Now.AddMinutes(2);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(1);
             _db.SaveChanges();
 
             _mailService.SendEmail(email, "CAPTCHA mới", $"CAPTCHA mới: {otp}\nHết hạn sau 5 phút.");
@@ -129,7 +129,7 @@ namespace SeviceSmartHopitail.Services
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
-            user.OtpExpireAt = DateTime.Now.AddMinutes(2);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(1);
             _db.SaveChanges();
 
             _mailService.SendEmail(email, "Quên mật khẩu", $"Mã CAPCHA xác thực reset mật khẩu: {otp}\nHết hạn sau 5 phút.");

@@ -43,17 +43,14 @@ namespace SeviceSmartHopitail.Services.Profiles
         // Lấy profile theo Id
         public async Task<UserProfile?> GetByIdAsync(int id)
         {
-            return await _db.UserProfiles
-                .Include(p => p.TaiKhoan)
-                .FirstOrDefaultAsync(p => p.HoSoId == id);
+            return await _db.UserProfiles.FirstOrDefaultAsync(x => x.HoSoId == id) ?? null;               
         }
 
         // Lấy profile theo tài khoản
         public async Task<UserProfile?> GetByTaiKhoanIdAsync(int taiKhoanId)
         {
-            return await _db.UserProfiles
-                .Include(p => p.TaiKhoan)
-                .FirstOrDefaultAsync(p => p.TaiKhoanId == taiKhoanId);
+            return await _db.UserProfiles.FirstOrDefaultAsync(x => x.TaiKhoanId == taiKhoanId) ?? null;
+               
         }
 
         // Thêm mới hồ sơ

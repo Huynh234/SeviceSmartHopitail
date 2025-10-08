@@ -159,7 +159,7 @@ namespace SeviceSmartHopitail.Services
                 user.OtpExpireAt = null;
                 _db.SaveChanges();
                 Console.WriteLine("Đặt lại mật khẩu thành công.");
-                return( false, "Đặt lại mật khẩu thành công.");
+                return( true, "Đặt lại mật khẩu thành công.");
             }
             else
             {

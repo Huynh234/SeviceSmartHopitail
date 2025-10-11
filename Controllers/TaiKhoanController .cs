@@ -19,8 +19,15 @@ namespace SeviceSmartHopitail.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            _taiKhoanService.Register(request.UserName, request.Email, request.Password);
-            return Ok(new { message = "Đăng ký thành công. Vui lòng kiểm tra email để lấy OTP." });
+            var (check , mess) = _taiKhoanService.Register(request.UserName, request.Email, request.Password);
+            if (!check)
+            {
+                return BadRequest(new { message = mess });
+            }
+            else
+            {
+                return Ok(new { message = mess });
+            }
         }
 
         // ================== XÁC THỰC OTP ==================
@@ -41,24 +48,45 @@ namespace SeviceSmartHopitail.Controllers
         [HttpPost("resend-otp")]
         public IActionResult ResendOtp([FromBody] ResendOtpRequest request)
         {
-            _taiKhoanService.ResendOtp(request.Email);
-            return Ok(new { message = "OTP mới đã được gửi." });
+           var (check, mess) = _taiKhoanService.ResendOtp(request.Email);
+            if (!check)
+            {
+                return BadRequest(new { message = mess });
+            }
+            else
+            {
+                return Ok(new { message = mess });
+            }
         }
 
         // ================== GỬI LẠI OTP ==================
         [HttpPost("resend-captcha")]
         public IActionResult ResendCaptcha([FromBody] ResendOtpRequest request)
         {
-            _taiKhoanService.ResendCapcha(request.Email);
-            return Ok(new { message = "CHATCHA mới đã được gửi." });
+            var (check, mess) = _taiKhoanService.ResendCapcha(request.Email);
+            if (!check)
+            {
+                return BadRequest(new { message = mess });
+            }
+            else
+            {
+                return Ok(new { message = mess });
+            }
         }
 
         // ================== QUÊN MẬT KHẨU ==================
         [HttpPost("forgot-password")]
         public IActionResult ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            _taiKhoanService.ForgotPassword(request.Email);
-            return Ok(new { message = "CAPTCHA reset mật khẩu đã gửi." });
+            var (check, mess) = _taiKhoanService.ForgotPassword(request.Email);
+            if (!check)
+            {
+                return BadRequest(new { message = mess });
+            }
+            else
+            {
+                return Ok(new { message = mess });
+            }
         }
 
         // ================== ĐẶT LẠI MẬT KHẨU ==================

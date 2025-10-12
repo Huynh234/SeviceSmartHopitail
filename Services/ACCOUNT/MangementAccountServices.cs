@@ -1,16 +1,18 @@
 ﻿using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Schemas;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace SeviceSmartHopitail.Services
 {
-    public class MangementAccount
+    public class MangementAccountServices
     {
         private readonly AppDbContext _db;
 
-        public MangementAccount(AppDbContext db)
+        public MangementAccountServices(AppDbContext db)
         {
             _db = db;
         }
@@ -97,6 +99,27 @@ namespace SeviceSmartHopitail.Services
             tk.PasswordHash = HashPassword(newPassword);
             await _db.SaveChangesAsync();
             return true;
+        }
+
+        // Update the AddAsync method to remove the reference to UserName from RegisterRequest
+        public async Task<(bool, string)> AddMoi(string Email, string? UserName, string Password)
+        {
+            // Kiểm tra email đã tồn tại chưa
+            var existingAccount = await _db.TaiKhoans.FirstOrDefaultAsync(t => t.Email == Email);
+            if (existingAccount != null)
+            {
+                return (false, "Email đã tồn tại.");
+            }
+            var us = new TaiKhoan
+            {
+                Email = Email,
+                UserName = UserName ?? "chua dat ten", // Default value since UserName is not part of RegisterRequest
+                PasswordHash = HashPassword(Password),
+                Status = true // Mặc định tài khoản mới tạo là khóa (chưa kích hoạt)
+            };
+            await _db.TaiKhoans.AddAsync(us);
+            await _db.SaveChangesAsync();
+            return (true, "Tạo tài khoản thành công.");
         }
     }
 }

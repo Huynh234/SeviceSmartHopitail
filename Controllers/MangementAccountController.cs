@@ -9,9 +9,9 @@ namespace SeviceSmartHopitail.Controllers
     [Route("api/[controller]")]
     public class MangementAccountController : ControllerBase
     {
-        private readonly MangementAccount _service;
+        private readonly MangementAccountServices _service;
 
-        public MangementAccountController(MangementAccount service)
+        public MangementAccountController(MangementAccountServices service)
         {
             _service = service;
         }
@@ -70,6 +70,20 @@ namespace SeviceSmartHopitail.Controllers
             var result = await _service.ResetPasswordAsync(id, dto.NewPassword);
             if (!result) return NotFound("Không tìm thấy tài khoản");
             return Ok("Đặt lại mật khẩu thành công");
+        }
+        // --- Đăng ký tài khoản mới ---
+        [HttpPost("register")]
+        public async Task<ActionResult> Register([FromBody] RegisterRequest request)
+        {
+            var (check, mess) = await _service.AddMoi(request.Email, request.Username, request.Password);
+            if (!check)
+            {
+                return BadRequest(new { message = mess });
+            }
+            else
+            {
+                return Ok(new { message = mess });
+            }
         }
     }
 }

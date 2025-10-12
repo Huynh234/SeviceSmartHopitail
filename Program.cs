@@ -27,7 +27,7 @@ builder.Services.AddScoped<MailServices>();
 builder.Services.AddScoped<CloudinaryServices>();
 builder.Services.AddScoped<UserProfileSevices>();
 builder.Services.AddScoped<HealthService>();
-builder.Services.AddScoped<MangementAccount>();
+builder.Services.AddScoped<MangementAccountServices>();
 
 // Gemini SDK client wrapper: nên để Singleton nếu SDK sử dụng HttpClient/kết nối bên trong
 builder.Services.AddSingleton<IGeminiClient, GeminiClientWrapper>();

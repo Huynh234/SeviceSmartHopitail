@@ -19,7 +19,7 @@ namespace SeviceSmartHopitail.Controllers
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegisterRequest request)
         {
-            var (check , mess) = _taiKhoanService.Register(request.UserName, request.Email, request.Password);
+            var (check , mess) = _taiKhoanService.Register(request.Username, request.Email, request.Password);
             if (!check)
             {
                 return BadRequest(new { message = mess });

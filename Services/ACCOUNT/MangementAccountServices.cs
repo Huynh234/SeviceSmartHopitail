@@ -28,7 +28,7 @@ namespace SeviceSmartHopitail.Services
         // Lấy tất cả tài khoản
         public async Task<List<TaiKhoan>> GetAllAsync()
         {
-            return await _db.TaiKhoans.Include(u => u.UserProfile).ToListAsync();
+            return await _db.TaiKhoans.ToListAsync();
         }
 
         // Tìm tài khoản theo Id

@@ -32,15 +32,13 @@ namespace SeviceSmartHopitail.Services
         }
 
         // Tìm tài khoản theo Id
-        public async Task<TaiKhoan?> GetByIdAsync(int ?id = 0, string ?email = "")
+        public async Task<List<TaiKhoan>?> GetByIdAsync(int ?id = 0, string ?email = "")
         {
             if (!string.IsNullOrEmpty(email))
             {
-                return await _db.TaiKhoans.Include(u => u.UserProfile)
-                                          .FirstOrDefaultAsync(t => t.Email == email);
+                return await _db.TaiKhoans.Where(t => t.Email == email).ToListAsync();
             }
-            return await _db.TaiKhoans.Include(u => u.UserProfile)
-                                      .FirstOrDefaultAsync(t => t.Id == id);
+            return await _db.TaiKhoans.Where(t => t.Id == id).ToListAsync();
         }
 
         // Sửa tài khoản

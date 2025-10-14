@@ -28,6 +28,7 @@ namespace SeviceSmartHopitail.Services
         // Lấy tất cả tài khoản
         public async Task<List<TaiKhoan>> GetAllAsync()
         {
+
             return await _db.TaiKhoans.ToListAsync();
         }
 
@@ -71,7 +72,7 @@ namespace SeviceSmartHopitail.Services
         {
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
-
+            tk.UpdateAt = DateTime.UtcNow;
             tk.Status = false; // 0 = khóa
             await _db.SaveChangesAsync();
             return true;
@@ -82,7 +83,7 @@ namespace SeviceSmartHopitail.Services
         {
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
-
+            tk.UpdateAt = DateTime.UtcNow;
             tk.Status = true; // 1 = mở
             await _db.SaveChangesAsync();
             return true;
@@ -93,7 +94,7 @@ namespace SeviceSmartHopitail.Services
         {
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
-
+            tk.UpdateAt = DateTime.UtcNow;
             tk.PasswordHash = HashPassword(newPassword);
             await _db.SaveChangesAsync();
             return true;

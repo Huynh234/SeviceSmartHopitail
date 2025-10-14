@@ -127,7 +127,7 @@ namespace SeviceSmartHopitail.Services.Profiles
                 Diastolic = record.Diastolic,
                 TimeSleep = record.TimeSleep,
                 Note = record.Note,
-                RecordedAt = record.RecordedAt == default ? DateTime.UtcNow : record.RecordedAt
+                RecordedAt = DateTime.UtcNow 
             };
 
             _db.HealthRecords.Add(health);

@@ -6,7 +6,6 @@ namespace SeviceSmartHopitail.Schemas
 {
     public class CreateHealthRecord
     {
-        public int RecordId { get; set; }
 
         public int UserProfileId { get; set; }
 
@@ -20,7 +19,5 @@ namespace SeviceSmartHopitail.Schemas
         public decimal? TimeSleep { get; set; } // hours
 
         public string? Note { get; set; }
-
-        public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
     }
 }

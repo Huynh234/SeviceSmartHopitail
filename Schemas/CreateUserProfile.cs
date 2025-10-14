@@ -8,7 +8,7 @@ namespace SeviceSmartHopitail.Schemas
 
         public string? FullName { get; set; }
 
-        public int? Age { get; set; }
+        public DateOnly? Birth { get; set; }
         public string? Gender { get; set; }
 
         public decimal? Height { get; set; }

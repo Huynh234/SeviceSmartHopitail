@@ -15,6 +15,22 @@ namespace SeviceSmartHopitail.Services.Profiles
             _cloudinary = cloudinary;
         }
 
+        public int TinhTuoi(DateOnly? birthDate)
+        {
+            if (!birthDate.HasValue)
+                throw new ArgumentNullException(nameof(birthDate), "Birth date cannot be null.");
+
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+            int age = today.Year - birthDate.Value.Year;
+
+            if (today < birthDate.Value.AddYears(age))
+            {
+                age--;
+            }
+
+            return age;
+        }
+
         public async Task<bool?> UpdatedAvatarAsync(int id, MemoryStream avatarStream, string fileName)
         {
             var profile = await _db.UserProfiles.FindAsync(id);
@@ -60,7 +76,8 @@ namespace SeviceSmartHopitail.Services.Profiles
             {
                 TaiKhoanId = pf.TaiKhoanId,
                 FullName = pf.FullName,
-                Age = pf.Age,
+                Age = TinhTuoi(pf.Birth),
+                Brith = pf.Birth,
                 Gender = pf.Gender,
                 Address = pf.Adress,
                 Height = pf.Height,
@@ -80,7 +97,8 @@ namespace SeviceSmartHopitail.Services.Profiles
             if (existing == null) return null;
 
             // cập nhật từng field
-            existing.Age = profile.Age;
+            existing.Age = TinhTuoi(profile.Birth);
+            existing.Brith = profile.Birth;
             existing.Gender = profile.Gender;
             existing.Height = profile.Height;
             existing.Address = profile.Adress;

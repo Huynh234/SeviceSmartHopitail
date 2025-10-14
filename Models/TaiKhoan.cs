@@ -21,6 +21,8 @@ namespace SeviceSmartHopitail.Models
 
         public string OtpHash { get; set; } = "";
         public DateTime? OtpExpireAt { get; set; } = DateTime.MinValue;
+        public DateTime? CreatAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdateAt { get; set; } = null;
 
         [Required]
         public bool Status { get; set; } = false; // Pending / Active / Locked

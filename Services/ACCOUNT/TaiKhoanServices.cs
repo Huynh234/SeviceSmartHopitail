@@ -161,6 +161,7 @@ namespace SeviceSmartHopitail.Services
                 user.PasswordHash = _mailService.Hash(newPassword);
                 user.OtpHash = "";
                 user.OtpExpireAt = null;
+                user.UpdateAt = DateTime.UtcNow;
                 _db.SaveChanges();
                 Console.WriteLine("Đặt lại mật khẩu thành công.");
                 return( true, "Đặt lại mật khẩu thành công.");

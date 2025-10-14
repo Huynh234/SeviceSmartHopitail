@@ -20,6 +20,7 @@ namespace SeviceSmartHopitail.Models
         public string? FullName { get; set; }
         public string? AvatarUrl { get; set; }
         public int? Age { get; set; }
+        public DateOnly? Brith { get; set; }
         public string? Gender { get; set; }
         public decimal? Height { get; set; }
         public decimal? Weight { get; set; }

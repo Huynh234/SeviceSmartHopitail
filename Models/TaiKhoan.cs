@@ -26,6 +26,7 @@ namespace SeviceSmartHopitail.Models
 
         [Required]
         public bool Status { get; set; } = false; // Pending / Active / Locked
+        public bool LockStatus { get; set; } = false;
 
         public UserProfile? UserProfile { get; set; }
     }

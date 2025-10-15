@@ -23,8 +23,13 @@ namespace SeviceSmartHopitail.Services
         {
             if (_db.TaiKhoans.Any(x => x.Email == email))
             {
-                Console.WriteLine("Email đã tồn tại!");
-                return (false, "Email đã tồn tại!");
+                var tk = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
+                if (!tk.Status)
+                    return (false, "Tài khoản chưa xác thực. Vui lòng xác minh email.");
+
+                if (!tk.LockStatus)
+                    return (false, "Tài khoản của bạn đã bị khóa. Liên hệ admin để mở khóa.");
+
             }
 
             string otp = _mailService.GenerateOTP();
@@ -37,7 +42,8 @@ namespace SeviceSmartHopitail.Services
                 PasswordHash = _mailService.Hash(password),
                 OtpHash = otpHash,
                 OtpExpireAt = DateTime.Now.AddMinutes(5),
-                Status = false
+                Status = false,
+                LockStatus = true
             };
 
             _db.TaiKhoans.Add(user);
@@ -58,6 +64,11 @@ namespace SeviceSmartHopitail.Services
                 return (false, "Email không tồn tại.");
             }
 
+            if(user.LockStatus == false)
+            {
+                return (false, "Tài khoản bị khóa liên hệ admin.");
+            }
+
             if (user.OtpExpireAt < DateTime.Now)
             {
                 Console.WriteLine("OTP đã hết hạn.");
@@ -67,6 +78,7 @@ namespace SeviceSmartHopitail.Services
             if (user.OtpHash == _mailService.Hash(inputOtp))
             {
                 user.Status = true;
+                user.LockStatus = true;
                 user.OtpHash = "";
                 user.OtpExpireAt = null;
                 _db.SaveChanges();
@@ -89,6 +101,10 @@ namespace SeviceSmartHopitail.Services
                 Console.WriteLine("Email không tồn tại.");
                 return (false, "Email không tồn tại.");
             }
+            if (user.LockStatus == false)
+            {
+                return (false, "Tài khoản bị khóa liên hệ admin.");
+            }
 
             string otp = _mailService.GenerateOTP();
             user.OtpHash = _mailService.Hash(otp);
@@ -109,6 +125,10 @@ namespace SeviceSmartHopitail.Services
                 Console.WriteLine("Email không tồn tại.");
                 return (false, "Email không tồn tại.");
             }
+            if (user.LockStatus == false)
+            {
+                return (false, "Tài khoản bị khóa liên hệ admin.");
+            }
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
@@ -128,6 +148,10 @@ namespace SeviceSmartHopitail.Services
             {
                 Console.WriteLine("Email không tồn tại.");
                 return (false, "Email không tồn tại.");
+            }
+            if (user.LockStatus == false)
+            {
+                return (false, "Tài khoản bị khóa liên hệ admin.");
             }
 
             string otp = _mailService.GenerateCaptcha();
@@ -180,7 +204,7 @@ namespace SeviceSmartHopitail.Services
             if (!email.Equals("adminLaAnhHuynh@gmail.com")){
                 var user = await _db.TaiKhoans.FirstOrDefaultAsync(u => u.Email == email);
 
-                if (user == null || user.Status != true)
+                if (user == null || user.Status != true || user.LockStatus != true)
                     return (new LoginReply(), string.Empty); // Không tồn tại hoặc chưa active
 
                 // So sánh password hash

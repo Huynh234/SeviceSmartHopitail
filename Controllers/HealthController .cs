@@ -71,7 +71,7 @@ namespace SeviceSmartHopitail.Controllers
 
         // ================== PUT (update hôm nay) ==================
         [HttpPut("update/{userProfileId}")]
-        public async Task<IActionResult> Update(int userProfileId, [FromBody] CreateHealthRecord dto)
+        public async Task<IActionResult> Update(int userProfileId, [FromBody] UpdateHealthRecord dto)
         {
             var record = await _healthService.UpdateTodayAsync(userProfileId, dto);
             if (record == null) return NotFound("Không tìm thấy bản ghi hôm nay.");

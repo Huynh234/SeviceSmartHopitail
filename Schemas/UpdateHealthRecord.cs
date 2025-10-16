@@ -1,12 +1,7 @@
-﻿using SeviceSmartHopitail.Models;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace SeviceSmartHopitail.Schemas
+﻿namespace SeviceSmartHopitail.Schemas
 {
-    public class CreateHealthRecord
+    public class UpdateHealthRecord
     {
-        public int UserProfileId { get; set; }
         public int HeartRate { get; set; } // bpm
 
         public decimal? BloodSugar { get; set; } // mg/dL

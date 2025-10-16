@@ -137,7 +137,7 @@ namespace SeviceSmartHopitail.Services.Profiles
         }
 
         // ================== Update (Sửa record hôm nay) ==================
-        public async Task<HealthRecord?> UpdateTodayAsync(int userProfileId, CreateHealthRecord updated)
+        public async Task<HealthRecord?> UpdateTodayAsync(int userProfileId, UpdateHealthRecord updated)
         {
             var today = DateTime.UtcNow.Date;
             var tomorrow = today.AddDays(1);

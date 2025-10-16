@@ -6,9 +6,6 @@ namespace SeviceSmartHopitail.Schemas
 {
     public class CreateHealthRecord
     {
-
-        public int UserProfileId { get; set; }
-
         public int HeartRate { get; set; } // bpm
 
         public decimal? BloodSugar { get; set; } // mg/dL

@@ -110,7 +110,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var (user, Token) = await _taiKhoanService.LoginAsync(request.Email, request.Password);
             if (user == new LoginReply() || Token == "")
-                return Unauthorized(new { message = "Đăng nhập thất bại. Sai email/mật khẩu hoặc tài khoản chưa kích hoạt." });
+                return BadRequest(new { message = "Đăng nhập thất bại. Sai email/mật khẩu hoặc tài khoản chưa kích hoạt." });
 
             return Ok(new { auth = user, token = Token });
         }

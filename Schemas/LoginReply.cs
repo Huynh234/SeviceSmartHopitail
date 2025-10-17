@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using SeviceSmartHopitail.Models;
+using System.Runtime.CompilerServices;
 
 namespace SeviceSmartHopitail.Schemas
 {
@@ -10,6 +11,8 @@ namespace SeviceSmartHopitail.Schemas
         public string? Password { get; set; } = "@@##**";
         public string? Role { get; set; }
         public bool check { get; set; } = true;
+
+        public int? Pf { get; set; }
 
     }
 }

@@ -50,7 +50,7 @@ namespace SeviceSmartHopitail.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.HoSoId }, created);
         }
 
-        [HttpPut("/update/{id}")]
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] CreateUserProfile profile, IFormFile? avatar)
         {
             MemoryStream? stream = null;

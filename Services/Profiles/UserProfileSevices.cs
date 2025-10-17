@@ -98,6 +98,7 @@ namespace SeviceSmartHopitail.Services.Profiles
 
             // cập nhật từng field
             existing.Age = TinhTuoi(profile.Birth);
+            existing.FullName = profile.FullName;
             existing.Brith = profile.Birth;
             existing.Gender = profile.Gender;
             existing.Height = profile.Height;

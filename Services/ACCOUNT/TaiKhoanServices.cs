@@ -211,15 +211,15 @@ namespace SeviceSmartHopitail.Services
                 if (user.PasswordHash != _mailService.Hash(password))
                     return (new LoginReply(), string.Empty); // Sai mật khẩu
                 var iss = await _db.UserProfiles.Where(x => x.TaiKhoanId.Equals(user.Id)).Select(x => x.Check).FirstOrDefaultAsync();
-
+                var pfe = await _db.UserProfiles.Where(x => x.TaiKhoanId.Equals(user.Id)).Select(x => x.HoSoId).FirstOrDefaultAsync();
 
                 var ue = new LoginReply{
                     Id = user.Id,
                     Email = user.Email,
                     UserName = user.UserName,
                     Role = "user",
-                    
-                    check = iss
+                    check = iss,
+                    Pf = pfe
                 };
                 Token = _jwt.GenerateToken(user.UserName, "user");
                 rep = ue;
@@ -235,8 +235,10 @@ namespace SeviceSmartHopitail.Services
                         Email = "adminLaAnhHuynh@gmail.com",
                         UserName = "EM la em anh Huynh",
                         Role = "admin",
-                       
-                    };
+                       check = true,
+                       Pf = 0
+
+                   };
                     Token = _jwt.GenerateToken("mai_la_em_anh_huynh", "admin");
                 }
                 rep = ue;

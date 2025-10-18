@@ -19,16 +19,26 @@ namespace SeviceSmartHopitail.Services
             _jwt = jwt;
         }
 
-        public (bool, string?) Register(string username, string email, string password)
+        public (int, string?) Register(string username, string email, string password)
         {
             if (_db.TaiKhoans.Any(x => x.Email == email))
             {
                 var tk = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
-                if (!tk.Status)
-                    return (false, "Tài khoản chưa xác thực. Vui lòng xác minh email.");
+                if (!tk.Status){
+                    string otp2 = _mailService.GenerateOTP();
+                    tk.OtpExpireAt = DateTime.Now.AddMinutes(5);
+                    tk.UserName = username; // cập nhật tên nếu muốn
+                    tk.PasswordHash = _mailService.Hash(password);
+                    tk.OtpHash = _mailService.Hash(otp2);
+                    tk.LockStatus = true;
+                    _db.SaveChanges();
+                    _mailService.SendEmail(email, "Xác thực tài khoản", $"Xin chào {username},\nOTP: {otp2}\nHết hạn sau 5 phút.");
+                    return (0, "Tài khoản chưa xác thực. Vui lòng xác minh email.");
+                }
 
-                if (!tk.LockStatus)
-                    return (false, "Tài khoản của bạn đã bị khóa. Liên hệ admin để mở khóa.");
+                if (!tk.LockStatus){
+                    return (2, "Tài khoản của bạn đã bị khóa. Liên hệ admin để mở khóa.");
+                }
 
             }
 
@@ -51,7 +61,7 @@ namespace SeviceSmartHopitail.Services
 
             _mailService.SendEmail(email, "Xác thực tài khoản", $"Xin chào {username},\nOTP: {otp}\nHết hạn sau 5 phút.");
             Console.WriteLine("Đăng ký thành công. OTP đã gửi qua email.");
-            return (true, "Đăng ký thành công. OTP đã gửi qua email.");
+            return (1, "Đăng ký thành công. OTP đã gửi qua email.");
         }
 
         // ================== VERIFY OTP ==================

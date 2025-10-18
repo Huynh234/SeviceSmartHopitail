@@ -20,13 +20,17 @@ namespace SeviceSmartHopitail.Controllers
         public IActionResult Register([FromBody] RegisterRequest request)
         {
             var (check , mess) = _taiKhoanService.Register(request.Username, request.Email, request.Password);
-            if (!check)
+            if (check == 0)
             {
-                return BadRequest(new { message = mess });
+                return BadRequest(new { message = mess, sOtp= 0 });
+            }
+            else if(check == 2)
+            {
+                return BadRequest(new { message = mess ,sOtp = 2});
             }
             else
             {
-                return Ok(new { message = mess });
+                return Ok(new { message = mess , sOtp = 1});
             }
         }
 

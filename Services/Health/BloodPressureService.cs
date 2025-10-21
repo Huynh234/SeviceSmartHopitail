@@ -28,8 +28,8 @@ namespace SeviceSmartHopitail.Services.Health
                 .FirstOrDefaultAsync();
             if (record == null) return null;
 
-            var pri = _db.PriWarnings
-                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
             return new{
                 Record = record,
                 BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri)
@@ -47,9 +47,9 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null) return null;
 
-            var pri = _db.PriWarnings
-                .FirstOrDefault(p => p.UserProfileId == userProfileId);
-             return new{
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
+            return new{
                 Record = record,
                 BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri)
                 };

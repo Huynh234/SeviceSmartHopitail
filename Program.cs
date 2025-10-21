@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Services;
 using SeviceSmartHopitail.Services.MAIL;
+using SeviceSmartHopitail.Services.Health;
 using SeviceSmartHopitail.Services.Profiles;
 using SeviceSmartHopitail.Services.RAG;
 using System.Text;
@@ -26,10 +27,14 @@ builder.Services.AddScoped<TaiKhoanServices>();
 builder.Services.AddScoped<MailServices>();
 builder.Services.AddScoped<CloudinaryServices>();
 builder.Services.AddScoped<UserProfileSevices>();
-builder.Services.AddScoped<HealthService>();
+builder.Services.AddScoped<HeartRateService>();
+builder.Services.AddScoped<BloodPressureService>();
+builder.Services.AddScoped<BloodSugarService>();
+builder.Services.AddScoped<SleepService>();
 builder.Services.AddScoped<MangementAccountServices>();
 builder.Services.AddScoped<QaServices>();
-
+builder.Services.AddScoped<WarningService>();
+builder.Services.AddScoped<HealthAlertService>();
 // Gemini SDK client wrapper: nên để Singleton nếu SDK sử dụng HttpClient/kết nối bên trong
 builder.Services.AddSingleton<IGeminiClient, GeminiClientWrapper>();
 
@@ -51,11 +56,19 @@ builder.Services.AddCors(options =>
 // --- Scheduler gửi email tự động
 builder.Services.AddHostedService<ScheduledEmailService>();
 
+// --- Scheduler nhắc nhở giấc ngủ
+builder.Services.AddHostedService<ReminderSleepService>();
+
 // --- Đăng ký PdfExtractor (nếu muốn gọi từ DI, không bắt buộc)
 builder.Services.AddTransient<PdfExtractor>();
 
 // --- Cấu hình Controllers + Swagger
 builder.Services.AddControllers();
+// .AddJsonOptions(options =>
+//     {
+//         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+//         options.JsonSerializerOptions.WriteIndented = true;
+//     });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

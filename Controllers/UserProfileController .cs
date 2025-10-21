@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Models;
-using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Schemas.PF;
 using SeviceSmartHopitail.Services.Profiles;
 
 namespace SeviceSmartHopitail.Controllers

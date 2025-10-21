@@ -1,4 +1,4 @@
-﻿namespace SeviceSmartHopitail.Schemas
+﻿namespace SeviceSmartHopitail.Schemas.TK
 {
     public class RegisterRequest
     {

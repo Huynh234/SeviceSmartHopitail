@@ -31,8 +31,10 @@ namespace SeviceSmartHopitail.Models
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         // === Thêm navigation tới PriWarning (1–1) ===
         public PriWarning? PriWarning { get; set; }
-
-        // === Navigation tới HealthRecord (1–n) ===
-        public ICollection<HealthRecord> HealthRecords { get; set; } = new List<HealthRecord>();
+        // === Liên kết tới các bảng sức khỏe mới ===
+        public ICollection<SleepRecord>? SleepRecords { get; set; }   // Giấc ngủ
+        public ICollection<BloodPressureRecord>? HealthHeartRates { get; set; } // Nhịp tim
+        public ICollection<BloodSugarRecord>? HealthBloodSugars { get; set; } // Đường huyết
+        public ICollection<HeartRateRecord>? HealthBloodPressures { get; set; } // Huyết áp
     }
 }

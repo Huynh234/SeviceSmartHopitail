@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models;
-using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Schemas.RAG;
 using SeviceSmartHopitail.Services.RAG;
 using System.Linq;
 using System.Text;

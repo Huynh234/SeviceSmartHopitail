@@ -1,4 +1,4 @@
-﻿namespace SeviceSmartHopitail.Schemas
+﻿namespace SeviceSmartHopitail.Schemas.RAG
 {
     public class AskDto
     {

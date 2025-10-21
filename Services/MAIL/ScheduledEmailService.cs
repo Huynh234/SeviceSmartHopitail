@@ -59,5 +59,6 @@ namespace SeviceSmartHopitail.Services.MAIL
                 //await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken); // test 1 phút gửi 1 lần
             }
         }
+
     }
 }

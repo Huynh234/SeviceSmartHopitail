@@ -1,6 +1,7 @@
 ﻿using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models;
 using Microsoft.EntityFrameworkCore;
+using SeviceSmartHopitail.Schemas.HR;
 
 namespace SeviceSmartHopitail.Services.Profiles
 {
@@ -14,22 +15,36 @@ namespace SeviceSmartHopitail.Services.Profiles
         }
 
         // Thêm mới cảnh báo cá nhân
-        public async Task<PriWarning> CreateAsync(PriWarning warning)
+        public async Task<PriWarning> CreateAsync(CPWarning warning)
         {
-            warning.CreatedAt = DateTime.UtcNow;
-            warning.UpdatedAt = DateTime.UtcNow;
+            var newWarning = new PriWarning
+            {
+                UserProfileId = warning.UserProfileId!.Value,
+                MinHeartRate = warning.MinHeartRate,
+                MaxHeartRate = warning.MaxHeartRate,
+                MinBloodSugar = warning.MinBloodSugar,
+                MaxBloodSugar = warning.MaxBloodSugar,
+                MinSystolic = warning.MinSystolic,
+                MaxSystolic = warning.MaxSystolic,
+                MinDiastolic = warning.MinDiastolic,
+                MaxDiastolic = warning.MaxDiastolic,
+                MinSleep = warning.MinSleep,
+                MaxSleep = warning.MaxSleep,
+                CreatedAt = warning.CreatedAt,
+                UpdatedAt = DateTime.UtcNow
+            };
 
-            _db.PriWarnings.Add(warning);
+            await _db.PriWarnings.AddAsync(newWarning);
             await _db.SaveChangesAsync();
 
-            return warning;
+            return newWarning;
         }
 
         // Cập nhật cảnh báo
-        public async Task<PriWarning?> UpdateAsync(PriWarning warning)
+        public async Task<PriWarning?> UpdateAsync(int WId, CPWarning warning)
         {
             var existing = await _db.PriWarnings
-                .FirstOrDefaultAsync(x => x.WarningId == warning.WarningId);
+                .FirstOrDefaultAsync(x => x.WarningId == WId);
 
             if (existing == null) return null;
 

@@ -1,0 +1,138 @@
+﻿using Microsoft.EntityFrameworkCore;
+using SeviceSmartHopitail.Datas;
+using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Services.Profiles;
+using SeviceSmartHopitail.Schemas.HR;
+
+namespace SeviceSmartHopitail.Services.Health
+{
+    public class SleepService
+    {
+        private readonly AppDbContext _db;
+        private readonly HealthAlertService _alertService;
+
+        public SleepService(AppDbContext db)
+        {
+            _db = db;
+            _alertService = new HealthAlertService();
+        }
+
+        public async Task<object?> GetTodayAsync(int userProfileId)
+        {
+            var today = DateTime.UtcNow.Date;
+            var tomorow = today.AddDays(1);
+            var record = await _db.SleepRecords
+                .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorow)
+                .OrderByDescending(r => r.RecordedAt)
+                .FirstOrDefaultAsync();
+
+            if (record == null) return null;
+
+            var pri = _db.PriWarnings
+                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            return new { Record = record, SleepAlert = _alertService.GetSleepAlert(record.HoursSleep, pri) };
+        }
+
+        public async Task<object?> GetTomorrowAsync(int userProfileId)
+        {
+            var today = DateTime.UtcNow.Date;
+            var tomorow = today.AddDays(1);
+            var record = await _db.SleepRecords
+                .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= tomorow && r.RecordedAt < tomorow.AddDays(1))
+                .OrderByDescending(r => r.RecordedAt)
+                .FirstOrDefaultAsync();
+
+            if (record == null) return null;
+
+            var pri = _db.PriWarnings
+                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            return new { Record = record, SleepAlert = _alertService.GetSleepAlert(record.HoursSleep, pri) };
+        }
+
+        public async Task<SleepRecord> CreateAsync(CreateSleepRecord model)
+        {
+            var today = DateTime.UtcNow.Date;
+            bool exists = await _db.SleepRecords
+                .AnyAsync(r => r.UserProfileId == model.UserProfileId && r.RecordedAt >= today);
+            if (exists)
+                throw new InvalidOperationException("Hôm nay đã có bản ghi giấc ngủ.");
+
+            var rec = new SleepRecord
+            {
+                UserProfileId = model.UserProfileId,
+                HoursSleep = model.HoursSleep,
+                Note = model.Note,
+                RecordedAt = DateTime.UtcNow
+            };
+
+            _db.SleepRecords.Add(rec);
+            await _db.SaveChangesAsync();
+            return rec;
+        }
+
+        public async Task<SleepRecord?> UpdateTodayAsync(int userProfileId, UpdateSleepR model)
+        {
+            var today = DateTime.UtcNow.Date;
+            var tomorow = today.AddDays(1);
+            var record = await _db.SleepRecords
+                .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorow)
+                .OrderByDescending(r => r.RecordedAt)
+                .FirstOrDefaultAsync();
+
+            if (record == null) return null;
+
+            record.HoursSleep = model.HoursSleep;
+            record.Note = model.Note;
+            record.RecordedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            return record;
+        }
+
+        // ===================== So sánh giấc ngủ =====================
+        public string CompareWithPrevious(SleepRecord today, SleepRecord? prev)
+        {
+            if (prev == null) return "Không có dữ liệu hôm trước";
+
+            if (today.HoursSleep > prev.HoursSleep) return "Thời gian ngủ tăng";
+            else if (today.HoursSleep < prev.HoursSleep) return "Thời gian ngủ giảm";
+            else return "Thời gian ngủ giữ nguyên";
+        }
+        // ===================== Biểu đồ giấc ngủ =====================
+        public async Task<object?> GetSleepChartDataAsync(int userProfileId)
+        {
+            var now = DateTime.UtcNow;
+            var oneMonthAgo = now.AddMonths(-1);
+
+            var records = await _db.SleepRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= oneMonthAgo &&
+                            r.RecordedAt <= now)
+                .OrderBy(r => r.RecordedAt)
+                .ToListAsync();
+
+            if (records.Count < 10) return null;
+
+            var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
+            var sleepData = records.Select(r => r.HoursSleep).ToList();
+
+            var data = new
+            {
+                labels,
+                datasets = new[]
+                {
+                    new {
+                        label = "Sleep Duration (hours)",
+                        fill = true,
+                        borderColor = "#26A69A",
+                        backgroundColor = "rgba(38,166,154,0.2)",
+                        tension = 0.4,
+                        data = sleepData
+                    }
+                }
+            };
+
+            return data;
+        }
+    }
+}

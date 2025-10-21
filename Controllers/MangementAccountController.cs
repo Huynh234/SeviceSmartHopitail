@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Services;
 using SeviceSmartHopitail.Models;
-using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Schemas.TK;
 
 namespace SeviceSmartHopitail.Controllers
 {

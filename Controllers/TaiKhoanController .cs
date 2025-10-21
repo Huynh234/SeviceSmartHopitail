@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Renci.SshNet.Messages;
-using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Schemas.TK;
 using SeviceSmartHopitail.Services;
 namespace SeviceSmartHopitail.Controllers
 {
@@ -22,7 +22,7 @@ namespace SeviceSmartHopitail.Controllers
             var (check , mess) = _taiKhoanService.Register(request.Username, request.Email, request.Password);
             if (check == 0)
             {
-                return BadRequest(new { message = mess, sOtp= 0 });
+                return Ok(new { message = mess, sOtp= 0 });
             }
             else if(check == 2)
             {
@@ -112,11 +112,16 @@ namespace SeviceSmartHopitail.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var (user, Token) = await _taiKhoanService.LoginAsync(request.Email, request.Password);
-            if (user == new LoginReply() || Token == "")
-                return BadRequest(new { message = "Đăng nhập thất bại. Sai email/mật khẩu hoặc tài khoản chưa kích hoạt." });
-
-            return Ok(new { auth = user, token = Token });
+            var (user, Token, sotp, mess) = await _taiKhoanService.LoginAsync(request.Email, request.Password);
+            if (sotp == 0)
+            {
+                return Ok(new { auth = user, token = Token,message = mess, status = sotp });
+            }
+            else if (sotp == 2)
+            {
+                return BadRequest(new { message = mess, status = sotp });
+            }
+            return Ok(new { auth = user, token = Token, mess, status = sotp });
         }
     }
 }

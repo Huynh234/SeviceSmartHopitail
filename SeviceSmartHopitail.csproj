@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Services\Account\" />
-    <Folder Include="Services\RecordHealth\" />
   </ItemGroup>
 
 </Project>

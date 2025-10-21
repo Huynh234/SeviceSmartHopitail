@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection.Metadata.Ecma335;
+using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models;
-using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Schemas.TK;
 using SeviceSmartHopitail.Services.MAIL;
 
 namespace SeviceSmartHopitail.Services
@@ -24,7 +25,8 @@ namespace SeviceSmartHopitail.Services
             if (_db.TaiKhoans.Any(x => x.Email == email))
             {
                 var tk = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
-                if (!tk.Status){
+                if (!tk.Status)
+                {
                     string otp2 = _mailService.GenerateOTP();
                     tk.OtpExpireAt = DateTime.Now.AddMinutes(5);
                     tk.UserName = username; // cập nhật tên nếu muốn
@@ -34,6 +36,11 @@ namespace SeviceSmartHopitail.Services
                     _db.SaveChanges();
                     _mailService.SendEmail(email, "Xác thực tài khoản", $"Xin chào {username},\nOTP: {otp2}\nHết hạn sau 5 phút.");
                     return (0, "Tài khoản chưa xác thực. Vui lòng xác minh email.");
+                }
+                
+                if(tk.Status)
+                {
+                    return (2, "Tài khoản đã tồn tại");
                 }
 
                 if (!tk.LockStatus){
@@ -207,19 +214,40 @@ namespace SeviceSmartHopitail.Services
             }
         }
 
-        public async Task<(LoginReply, string?)> LoginAsync(string email, string password)
+        public async Task<(LoginReply, string?, int, string?)> LoginAsync(string email, string password)
         {
             var rep = new LoginReply();
             string? Token = null;
             if (!email.Equals("adminLaAnhHuynh@gmail.com")){
                 var user = await _db.TaiKhoans.FirstOrDefaultAsync(u => u.Email == email);
 
-                if (user == null || user.Status != true || user.LockStatus != true)
-                    return (new LoginReply(), string.Empty); // Không tồn tại hoặc chưa active
+                if (user != null && user.Status != true)
+                {
+                    var tk = new LoginReply
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        UserName = user.UserName,
+                        Role = "user",
+                        check = false,
+                        Pf = -1
+                    };
+
+                    string otp = _mailService.GenerateOTP();
+                    user.OtpHash = _mailService.Hash(otp);
+                    user.OtpExpireAt = DateTime.Now.AddMinutes(5);
+                    await _db.SaveChangesAsync();
+                    _mailService.SendEmail(email, "OTP mới", $"OTP mới: {otp}\nHết hạn sau 5 phút.");
+                    Console.WriteLine("OTP mới đã gửi.");
+                    return (tk, string.Empty, 0, "tài khoản chưa xác thực");
+                }
+
+                if (user == null || user.LockStatus != true)
+                    return (new LoginReply(), string.Empty, 2, "Tài khoản không tồn tại hoặc sai mật khẩu/Tài khoản bị khóa"); // Không tồn tại hoặc chưa active
 
                 // So sánh password hash
                 if (user.PasswordHash != _mailService.Hash(password))
-                    return (new LoginReply(), string.Empty); // Sai mật khẩu
+                    return (new LoginReply(), string.Empty, 2,"Tài khoản không tồn tại hoặc sai mật khẩu/Tài khoản bị khóa"); // Sai mật khẩu
                 var iss = await _db.UserProfiles.Where(x => x.TaiKhoanId.Equals(user.Id)).Select(x => x.Check).FirstOrDefaultAsync();
                 var pfe = await _db.UserProfiles.Where(x => x.TaiKhoanId.Equals(user.Id)).Select(x => x.HoSoId).FirstOrDefaultAsync();
 
@@ -253,7 +281,7 @@ namespace SeviceSmartHopitail.Services
                 }
                 rep = ue;
             }
-            return (rep, Token);
+            return (rep, Token, 1, "Đăng nhập thành công");
         }
 
     }

@@ -14,8 +14,13 @@ namespace SeviceSmartHopitail.Datas
         public DbSet<QuestionLog> QuestionLogs { get; set; } = null!;
         public DbSet<TaiKhoan> TaiKhoans { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
-        public DbSet<HealthRecord> HealthRecords { get; set; }
         public DbSet<PriWarning> PriWarnings { get; set; } = null!;
+        public DbSet<RemindersSleep> RemindersSleeps { get; set; } = null!;
+        public DbSet<HeartRateRecord> HeartRateRecords { get; set; }
+        public DbSet<BloodPressureRecord> BloodPressureRecords { get; set; }
+        public DbSet<BloodSugarRecord> BloodSugarRecords { get; set; }
+        public DbSet<SleepRecord> SleepRecords { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -35,11 +40,39 @@ namespace SeviceSmartHopitail.Datas
                 .WithOne(pw => pw.UserProfile)
                 .HasForeignKey<PriWarning>(pw => pw.UserProfileId);
 
-            // --- UserProfile <-> HealthRecord (1-n)
+            modelBuilder.Entity<TaiKhoan>()
+                .HasOne(t => t.RemindersSleep)
+                .WithOne(r => r.TaiKhoan)
+                .HasForeignKey<RemindersSleep>(r => r.TkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // --- UserProfile <-> HealthHeartRate (1-n)
             modelBuilder.Entity<UserProfile>()
-                .HasMany(up => up.HealthRecords)
+                .HasMany(up => up.HealthHeartRates)
                 .WithOne(hr => hr.UserProfile)
-                .HasForeignKey(hr => hr.UserProfileId);
+                .HasForeignKey(hr => hr.UserProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // --- UserProfile <-> HealthBloodSugar (1-n)
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(up => up.HealthBloodSugars)
+                .WithOne(bs => bs.UserProfile)
+                .HasForeignKey(bs => bs.UserProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // --- UserProfile <-> HealthBloodPressure (1-n)
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(up => up.HealthBloodPressures)
+                .WithOne(bp => bp.UserProfile)
+                .HasForeignKey(bp => bp.UserProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // --- UserProfile <-> RemindersSleep (1-n)
+            modelBuilder.Entity<UserProfile>()
+                .HasMany(up => up.SleepRecords)
+                .WithOne(s => s.UserProfile)
+                .HasForeignKey(s => s.UserProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

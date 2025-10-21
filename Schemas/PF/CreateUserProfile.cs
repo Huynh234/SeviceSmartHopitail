@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SeviceSmartHopitail.Schemas
+namespace SeviceSmartHopitail.Schemas.PF
 {
     public class CreateUserProfile
     {

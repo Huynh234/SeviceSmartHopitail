@@ -29,5 +29,6 @@ namespace SeviceSmartHopitail.Models
         public bool LockStatus { get; set; } = false;
 
         public UserProfile? UserProfile { get; set; }
+        public RemindersSleep? RemindersSleep { get; set; }
     }
 }

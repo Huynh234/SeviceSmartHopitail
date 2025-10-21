@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models;
-using SeviceSmartHopitail.Schemas;
+using SeviceSmartHopitail.Schemas.PF;
 
 namespace SeviceSmartHopitail.Services.Profiles
 {

@@ -73,7 +73,7 @@ namespace SeviceSmartHopitail.Services
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
             tk.UpdateAt = DateTime.UtcNow;
-            tk.Status = false; // 0 = khóa
+            tk.LockStatus = false; // 0 = khóa
             await _db.SaveChangesAsync();
             return true;
         }
@@ -84,7 +84,7 @@ namespace SeviceSmartHopitail.Services
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
             tk.UpdateAt = DateTime.UtcNow;
-            tk.Status = true; // 1 = mở
+            tk.LockStatus = true; // 1 = mở
             await _db.SaveChangesAsync();
             return true;
         }
@@ -114,7 +114,8 @@ namespace SeviceSmartHopitail.Services
                 Email = Email,
                 UserName = UserName ?? "chua dat ten", // Default value since UserName is not part of RegisterRequest
                 PasswordHash = HashPassword(Password),
-                Status = true // Mặc định tài khoản mới tạo là khóa (chưa kích hoạt)
+                Status = true, // Mặc định tài khoản mới tạo là khóa (chưa kích hoạt)
+                LockStatus = true, // Mặc định tài khoản mới tạo là mở
             };
             await _db.TaiKhoans.AddAsync(us);
             await _db.SaveChangesAsync();

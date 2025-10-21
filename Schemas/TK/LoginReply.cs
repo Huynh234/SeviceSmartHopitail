@@ -1,7 +1,7 @@
 ﻿using SeviceSmartHopitail.Models;
 using System.Runtime.CompilerServices;
 
-namespace SeviceSmartHopitail.Schemas
+namespace SeviceSmartHopitail.Schemas.TK
 {
     public class LoginReply
     {

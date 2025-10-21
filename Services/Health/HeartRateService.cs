@@ -31,8 +31,8 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null) return null;
 
-            var pri = _db.PriWarnings
-                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
             return new { Record = record, HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri) };
         }
 
@@ -50,8 +50,8 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null) return null;
 
-            var pri = _db.PriWarnings
-                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
             return new { Record = record, HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri) };
         }
 

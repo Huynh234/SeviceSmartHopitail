@@ -28,24 +28,24 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null) return null;
 
-            var pri = _db.PriWarnings
-                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
             return new { Record = record, SleepAlert = _alertService.GetSleepAlert(record.HoursSleep, pri) };
         }
 
-        public async Task<object?> GetTomorrowAsync(int userProfileId)
+        public async Task<object?> GetYesterdayAsync(int userProfileId)
         {
             var today = DateTime.UtcNow.Date;
-            var tomorow = today.AddDays(1);
+            var yesterday = today.AddDays(-1);
             var record = await _db.SleepRecords
-                .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= tomorow && r.RecordedAt < tomorow.AddDays(1))
+                .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= yesterday && r.RecordedAt < today)
                 .OrderByDescending(r => r.RecordedAt)
                 .FirstOrDefaultAsync();
 
             if (record == null) return null;
 
-            var pri = _db.PriWarnings
-                .FirstOrDefault(p => p.UserProfileId == userProfileId);
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
             return new { Record = record, SleepAlert = _alertService.GetSleepAlert(record.HoursSleep, pri) };
         }
 
@@ -92,10 +92,13 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== So sánh giấc ngủ =====================
         public string CompareWithPrevious(SleepRecord today, SleepRecord? prev)
         {
-            if (prev == null) return "Không có dữ liệu hôm trước";
+             if (prev == null) return "Không có dữ liệu hôm trước";
 
-            if (today.HoursSleep > prev.HoursSleep) return "Thời gian ngủ tăng";
-            else if (today.HoursSleep < prev.HoursSleep) return "Thời gian ngủ giảm";
+            var diff = today.HoursSleep - prev.HoursSleep;
+            var percent = (diff / prev.HoursSleep) * 100;
+
+            if (diff > 0) return $"Thời gian ngủ tăng {diff:F1}h (+{percent:F1}%)";
+            else if (diff < 0) return $"Thời gian ngủ giảm {-diff:F1}h ({percent:F1}%)";
             else return "Thời gian ngủ giữ nguyên";
         }
         // ===================== Biểu đồ giấc ngủ =====================
@@ -131,8 +134,22 @@ namespace SeviceSmartHopitail.Services.Health
                     }
                 }
             };
-
             return data;
+        }
+
+        // ===================== Trung bình giấc ngủ tháng =====================
+        public async Task<double> GetAverageSleepAsync(int userProfileId)
+        {
+            var now = DateTime.UtcNow;
+            var oneMonthAgo = now.AddMonths(-1);
+
+            var records = await _db.SleepRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= oneMonthAgo &&
+                            r.RecordedAt <= now)
+                .ToListAsync();
+
+            return (double)(records.Count == 0 ? 0 : records.Average(r => r.HoursSleep));
         }
     }
 }

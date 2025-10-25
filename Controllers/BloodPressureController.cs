@@ -97,6 +97,14 @@ namespace SeviceSmartHopitail.Controllers
             if (data == null) return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
             return Ok(data);
         }
+        [HttpGet("average/{userProfileId}")]
+        public async Task<IActionResult> GetAverage(int userProfileId, [FromQuery] int days = 30)
+        {
+            var result = await _service.GetAverageBloodPressureAsync(userProfileId, days);
+            if (result == null)
+                return NotFound(new { message = $"Không có dữ liệu huyết áp trong {days} ngày gần nhất." });
 
+            return Ok(result);
+        }
     }
 }

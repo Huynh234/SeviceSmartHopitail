@@ -131,5 +131,32 @@ namespace SeviceSmartHopitail.Services.Health
 
             return data;
         }
+         // ===================== Trung bình đường huyết =====================
+        public async Task<object?> GetAverageBloodSugarAsync(int userProfileId, int days = 30)
+        {
+            var endDate = DateTime.UtcNow;
+            var startDate = endDate.AddDays(-days);
+
+            var records = await _db.BloodSugarRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= startDate &&
+                            r.RecordedAt <= endDate)
+                .ToListAsync();
+
+            if (records.Count == 0)
+                return null;
+
+            var avgBloodSugar = Math.Round(records.Average(r => r.BloodSugar), 2);
+
+            return new
+            {
+                UserProfileId = userProfileId,
+                Days = days,
+                AverageBloodSugar = avgBloodSugar,
+                RecordCount = records.Count,
+                From = startDate.ToString("dd/MM/yyyy"),
+                To = endDate.ToString("dd/MM/yyyy")
+            };
+        }
     }
 }

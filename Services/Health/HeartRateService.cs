@@ -145,5 +145,17 @@ namespace SeviceSmartHopitail.Services.Health
 
             return data;
         }
+
+        public async Task<double> GetAverageHeartRateAsync(int userProfileId)
+        {
+            var now = DateTime.UtcNow;
+            var oneMonthAgo = now.AddMonths(-1);
+            var records = await _db.HeartRateRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= oneMonthAgo &&
+                            r.RecordedAt <= now)
+                .ToListAsync();
+            return records.Count == 0 ? 0 : records.Average(r => r.HeartRate);
+        }
     }
 }

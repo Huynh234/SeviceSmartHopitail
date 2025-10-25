@@ -105,5 +105,27 @@ namespace SeviceSmartHopitail.Controllers
 
             return Ok(data);
         }
+
+        // ===================== API: Lấy trung bình nhịp tim =====================
+        [HttpGet("average/{userProfileId}")]
+        public async Task<IActionResult> GetAverageHeartRate(int userProfileId)
+        {
+            var average = await _service.GetAverageHeartRateAsync(userProfileId);
+
+            if (average == 0)
+            {
+                return NotFound(new { 
+                    Message = "Không có dữ liệu nhịp tim trong 30 ngày gần nhất.",
+                    UserProfileId = userProfileId 
+                });
+            }
+
+            return Ok(new
+            {
+                UserProfileId = userProfileId,
+                AverageHeartRate = Math.Round(average, 2),
+                Period = "30 ngày gần nhất"
+            });
+        }
     }
 }

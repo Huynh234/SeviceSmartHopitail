@@ -117,5 +117,15 @@ namespace SeviceSmartHopitail.Controllers
 
             return Ok(data);
         }
+        [HttpGet("average/{userProfileId}")]
+        public async Task<IActionResult> GetAverage(int userProfileId, [FromQuery] int days = 30)
+        {
+            var result = await _service.GetAverageBloodSugarAsync(userProfileId, days);
+            if (result == null)
+                return NotFound(new { message = $"Không có dữ liệu đường huyết trong {days} ngày gần nhất." });
+
+            return Ok(result);
+        }
+
     }
 }

@@ -126,6 +126,14 @@ namespace SeviceSmartHopitail.Controllers
 
             return Ok(result);
         }
+        [HttpGet("Recently/{userProfileId}")]
+        public async Task<IActionResult> GetRecent(int userProfileId)
+        {
+            var result = await _service.GetRecentlyAsync(userProfileId);
+            if (result == null)
+                return NotFound(new { message = $"Không có dữ liệu đường huyết nào" });
 
+            return Ok(result);
+        }
     }
 }

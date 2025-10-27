@@ -127,5 +127,14 @@ namespace SeviceSmartHopitail.Controllers
                 Period = "30 ngày gần nhất"
             });
         }
+        [HttpGet("Recently/{userProfileId}")]
+        public async Task<IActionResult> GetRecent(int userProfileId)
+        {
+            var result = await _service.GetRecentlyAsync(userProfileId);
+            if (result == null)
+                return NotFound(new { message = $"Không có dữ liệu nhịp tim nào" });
+
+            return Ok(result);
+        }
     }
 }

@@ -111,5 +111,15 @@ namespace SeviceSmartHopitail.Controllers
             var avg = await _sleepService.GetAverageSleepAsync(userProfileId);
             return Ok(new { AverageHours = avg });
         }
+
+        [HttpGet("Recently/{userProfileId}")]
+        public async Task<IActionResult> GetRecent(int userProfileId)
+        {
+            var result = await _sleepService.GetRecentlyAsync(userProfileId);
+            if (result == null)
+                return NotFound(new { message = $"Không có dữ liệu giấc ngủ nào" });
+
+            return Ok(result);
+        }
     }
 }

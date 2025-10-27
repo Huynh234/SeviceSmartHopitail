@@ -157,5 +157,23 @@ namespace SeviceSmartHopitail.Services.Health
                 .ToListAsync();
             return records.Count == 0 ? 0 : records.Average(r => r.HeartRate);
         }
+
+        public async Task<object?> GetRecentlyAsync(int ProID)
+        {
+            var record = await _db.HeartRateRecords.Where(x => x.UserProfileId == ProID).OrderBy(x => x.RecordedAt).FirstOrDefaultAsync();
+
+            if (record == null)
+                return null;
+
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == ProID);
+
+            return new
+            {
+                Record = record,
+                HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri)
+            };
+        }
+
     }
 }

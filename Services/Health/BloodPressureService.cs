@@ -186,5 +186,28 @@ namespace SeviceSmartHopitail.Services.Health
                 To = endDate.ToString("dd/MM/yyyy")
             };
         }
+
+        // ===================== Lấy bản ghi gần đây nhất =====================
+        public async Task<object?> GetRecentlyAsync(int userProfileId)
+        {
+            var record = await _db.BloodPressureRecords
+                .Where(r => r.UserProfileId == userProfileId)
+                .OrderByDescending(r => r.RecordedAt)
+                .FirstOrDefaultAsync();
+
+            if (record == null)
+                return null;
+
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
+
+            return new
+            {
+                Record = record,
+                BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri)
+            };
+        }
+
+
     }
 }

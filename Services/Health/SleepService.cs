@@ -151,5 +151,23 @@ namespace SeviceSmartHopitail.Services.Health
 
             return (double)(records.Count == 0 ? 0 : records.Average(r => r.HoursSleep));
         }
+//=== lấy dữ liệu gần nhất =====
+        public async Task<object?> GetRecentlyAsync(int ProID)
+        {
+            var record = await _db.SleepRecords.Where(x => x.UserProfileId == ProID).OrderBy(x => x.RecordedAt).FirstOrDefaultAsync();
+
+            if (record == null)
+                return null;
+
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == ProID);
+
+            return new
+            {
+                Record = record,
+                SleepAlert = _alertService.GetBloodSugarAlert(record.HoursSleep, pri)
+            };
+        }
+
     }
 }

@@ -158,5 +158,22 @@ namespace SeviceSmartHopitail.Services.Health
                 To = endDate.ToString("dd/MM/yyyy")
             };
         }
+//================ lấy dữ liệu gần đây ========================
+        public async Task<object?> GetRecentlyAsync(int ProID)
+        {
+            var record = await _db.BloodSugarRecords.Where(x => x.UserProfileId == ProID).OrderBy(x => x.RecordedAt).FirstOrDefaultAsync();
+
+            if (record == null)
+                return null;
+
+            var pri = await _db.PriWarnings
+                .FirstOrDefaultAsync(p => p.UserProfileId == ProID);
+
+            return new {
+                Record = record,
+                BloodSugarcord = _alertService.GetBloodSugarAlert(record.BloodSugar, pri)
+            };
+        }
+
     }
 }

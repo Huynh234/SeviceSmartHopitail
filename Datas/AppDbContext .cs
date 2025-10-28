@@ -1,6 +1,9 @@
-﻿using SeviceSmartHopitail.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using SeviceSmartHopitail.Models.Health;
+using SeviceSmartHopitail.Models.AI;
+using SeviceSmartHopitail.Models.Reminds;
+using SeviceSmartHopitail.Models.Infomation;
 
 namespace SeviceSmartHopitail.Datas
 {
@@ -16,6 +19,10 @@ namespace SeviceSmartHopitail.Datas
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<PriWarning> PriWarnings { get; set; } = null!;
         public DbSet<RemindersSleep> RemindersSleeps { get; set; } = null!;
+        public DbSet<RemindExercise> RemindExercises { get; set; } = null!;
+        public DbSet<RemindDrinkWater> RemindDrinkWaters { get; set; } = null!;
+        public DbSet<RemindTakeMedicine> RemindTakeMedicines { get; set; } = null!;
+
         public DbSet<HeartRateRecord> HeartRateRecords { get; set; }
         public DbSet<BloodPressureRecord> BloodPressureRecords { get; set; }
         public DbSet<BloodSugarRecord> BloodSugarRecords { get; set; }
@@ -72,6 +79,26 @@ namespace SeviceSmartHopitail.Datas
                 .HasMany(up => up.SleepRecords)
                 .WithOne(s => s.UserProfile)
                 .HasForeignKey(s => s.UserProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TaiKhoan>()
+                .HasOne(t => t.RemindExercise)
+                .WithOne(r => r.TaiKhoan)
+                .HasForeignKey<RemindExercise>(r => r.TkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Cấu hình 1-1: TaiKhoan ↔ RemindDrinkWater
+            modelBuilder.Entity<TaiKhoan>()
+                .HasOne(t => t.RemindDrinkWater)
+                .WithOne(r => r.TaiKhoan)
+                .HasForeignKey<RemindDrinkWater>(r => r.TkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Cấu hình 1-1: TaiKhoan ↔ RemindTakeMedicine
+            modelBuilder.Entity<TaiKhoan>()
+                .HasOne(t => t.RemindTakeMedicine)
+                .WithOne(r => r.TaiKhoan)
+                .HasForeignKey<RemindTakeMedicine>(r => r.TkId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

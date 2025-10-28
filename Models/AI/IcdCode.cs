@@ -1,4 +1,4 @@
-﻿namespace SeviceSmartHopitail.Models
+﻿namespace SeviceSmartHopitail.Models.AI
 {
     public class IcdCode
     {

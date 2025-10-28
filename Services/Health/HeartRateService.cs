@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
 using SeviceSmartHopitail.Services.Profiles;
 using SeviceSmartHopitail.Schemas.HR;
+using SeviceSmartHopitail.Models.Health;
 namespace SeviceSmartHopitail.Services.Health
 {
     public class HeartRateService

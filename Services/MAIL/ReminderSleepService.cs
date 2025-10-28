@@ -35,7 +35,7 @@ namespace SeviceSmartHopitail.Services.MAIL
 
                         // Lấy các reminder có giờ trùng với giờ hiện tại
                         var reminders = db.RemindersSleeps
-                            .Where(r => r.HoursSleep.HasValue && (int)r.HoursSleep.Value == currentHour)
+                            .Where(r => r.TimeRemind.HasValue && (int)r.TimeRemind.Value == currentHour)
                             .ToList();
 
                         foreach (var reminder in reminders)

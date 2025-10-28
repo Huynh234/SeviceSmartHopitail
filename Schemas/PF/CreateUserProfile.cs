@@ -11,10 +11,12 @@ namespace SeviceSmartHopitail.Schemas.PF
         public DateOnly? Birth { get; set; }
         public string? Gender { get; set; }
 
+        [MaxLength(10)] // Correctly applying the MaxLength attribute
+        public string? PhoneNumber { get; set; }
+
         public decimal? Height { get; set; }
         public decimal? Weight { get; set; }
 
         public string? Adress { get; set; }
-
     }
 }

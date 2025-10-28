@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SeviceSmartHopitail.Models.Reminds;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
 
-namespace SeviceSmartHopitail.Models
+namespace SeviceSmartHopitail.Models.Infomation
 {
     public class TaiKhoan
     {
@@ -30,5 +31,8 @@ namespace SeviceSmartHopitail.Models
 
         public UserProfile? UserProfile { get; set; }
         public RemindersSleep? RemindersSleep { get; set; }
+        public RemindExercise? RemindExercise { get; set; }
+        public RemindDrinkWater? RemindDrinkWater { get; set; }
+        public RemindTakeMedicine? RemindTakeMedicine { get; set; }
     }
 }

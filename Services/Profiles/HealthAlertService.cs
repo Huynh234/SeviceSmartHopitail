@@ -1,4 +1,4 @@
-﻿using SeviceSmartHopitail.Models;
+﻿using SeviceSmartHopitail.Models.Health;
 
 namespace SeviceSmartHopitail.Services.Profiles
 {

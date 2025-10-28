@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using SeviceSmartHopitail.Models.Health;
 
-namespace SeviceSmartHopitail.Models
+namespace SeviceSmartHopitail.Models.Infomation
 {
     public class UserProfile
     {
@@ -20,6 +21,7 @@ namespace SeviceSmartHopitail.Models
         public string? FullName { get; set; }
         public string? AvatarUrl { get; set; }
         public int? Age { get; set; }
+        public string? PhoneNumber { get; set; }
         public DateOnly? Brith { get; set; }
         public string? Gender { get; set; }
         public decimal? Height { get; set; }

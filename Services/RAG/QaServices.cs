@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Models.AI;
 using SeviceSmartHopitail.Schemas.RAG;
 using System.Text;
 

@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SeviceSmartHopitail.Models.Infomation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SeviceSmartHopitail.Models
+namespace SeviceSmartHopitail.Models.Health
 {
     public class BloodPressureRecord
     {

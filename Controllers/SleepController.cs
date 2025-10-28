@@ -38,7 +38,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Thêm mới bản ghi giấc ngủ =====================
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateSleepRecord model)
         {
             if (!ModelState.IsValid)

@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5092",
+      "applicationUrl": "http://10.15.110.226:5092",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "SSH_TUNNEL_PASSWORD": "sshpasswordhuynh"

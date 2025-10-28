@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Models.Infomation;
 using SeviceSmartHopitail.Schemas.PF;
 
 namespace SeviceSmartHopitail.Services.Profiles
@@ -80,6 +80,7 @@ namespace SeviceSmartHopitail.Services.Profiles
                 Brith = pf.Birth,
                 Gender = pf.Gender,
                 Address = pf.Adress,
+                PhoneNumber = pf.PhoneNumber,
                 Height = pf.Height,
                 Weight = pf.Weight,
                 Check = true
@@ -101,6 +102,7 @@ namespace SeviceSmartHopitail.Services.Profiles
             existing.FullName = profile.FullName;
             existing.Brith = profile.Birth;
             existing.Gender = profile.Gender;
+            existing.PhoneNumber = profile.PhoneNumber;
             existing.Height = profile.Height;
             existing.Address = profile.Adress;
             existing.Weight = profile.Weight;

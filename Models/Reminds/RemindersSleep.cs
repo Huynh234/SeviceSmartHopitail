@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using SeviceSmartHopitail.Models.Infomation;
 
-namespace SeviceSmartHopitail.Models
+namespace SeviceSmartHopitail.Models.Reminds
 {
     public class RemindersSleep
     {
@@ -11,7 +12,7 @@ namespace SeviceSmartHopitail.Models
 
         [ForeignKey(nameof(TaiKhoan))] // chỉ định khóa ngoại 1-1
         public int TkId { get; set; }
-        public decimal? HoursSleep { get; set; }
+        public decimal? TimeRemind { get; set; }
         public string? Title { get; set; }
         public TaiKhoan TaiKhoan { get; set; } = null!;
         public DateTime? LastSent { get; set; }   // Ngày gửi lần cuối

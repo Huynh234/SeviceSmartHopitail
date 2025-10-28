@@ -4,7 +4,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Models.AI;
 
 namespace SeviceSmartHopitail.Services
 {

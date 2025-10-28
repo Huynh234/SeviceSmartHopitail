@@ -1,7 +1,7 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Models.Infomation;
 using SeviceSmartHopitail.Schemas.TK;
 using SeviceSmartHopitail.Services.MAIL;
 

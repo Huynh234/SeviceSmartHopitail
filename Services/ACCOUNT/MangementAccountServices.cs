@@ -1,10 +1,10 @@
 ﻿using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
 using SeviceSmartHopitail.Schemas;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity.Data;
+using SeviceSmartHopitail.Models.Infomation;
 
 namespace SeviceSmartHopitail.Services
 {

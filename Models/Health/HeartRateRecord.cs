@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SeviceSmartHopitail.Models.Infomation;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SeviceSmartHopitail.Models
+namespace SeviceSmartHopitail.Models.Health
 {
-    public class BloodSugarRecord
+    public class HeartRateRecord
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -16,22 +17,22 @@ namespace SeviceSmartHopitail.Models
         public UserProfile UserProfile { get; set; } = null!;
 
         [Required]
-        public decimal BloodSugar { get; set; } // mg/dL
+        public int HeartRate { get; set; } // bpm
         public string? Note { get; set; }
         public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
 
         [NotMapped]
-        public string BloodSugarAlert
+        public string HeartRateAlert
         {
             get
             {
                 var pri = UserProfile?.PriWarning;
-                decimal min = pri?.MinBloodSugar ?? 70;
-                decimal max = pri?.MaxBloodSugar ?? 140;
+                int min = pri?.MinHeartRate ?? 60;
+                int max = pri?.MaxHeartRate ?? 100;
 
-                if (BloodSugar < min) return "Đường huyết thấp (cảnh báo)";
-                if (BloodSugar > max) return "Đường huyết cao (cảnh báo)";
-                return "Đường huyết bình thường";
+                if (HeartRate < min) return "Nhịp tim thấp (cảnh báo)";
+                if (HeartRate > max) return "Nhịp tim cao (cảnh báo)";
+                return "Nhịp tim bình thường";
             }
         }
     }

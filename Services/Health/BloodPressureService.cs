@@ -1,10 +1,10 @@
-﻿using SeviceSmartHopitail.Models;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Services.Profiles;
 using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Schemas.HR;
+using SeviceSmartHopitail.Models.Health;
 namespace SeviceSmartHopitail.Services.Health
 {
     public class BloodPressureService

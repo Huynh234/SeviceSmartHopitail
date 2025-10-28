@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Models;
+using SeviceSmartHopitail.Models.Health;
 using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Services.Health;
 

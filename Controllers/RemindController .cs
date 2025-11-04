@@ -86,5 +86,38 @@ namespace SeviceSmartHopitail.Controllers
             var success = await _drinkWaterService.DeleteAsync(id);
             return success ? Ok("Deleted successfully") : NotFound("Remind not found");
         }
+
+        [HttpGet("all/{tkId}")]
+        public async Task<IActionResult> DeleteAllReminds(int tkId)
+        {
+            var medicineRemind = await _medicineService.GetByTkIdAsync(tkId);
+            if (medicineRemind != null)
+            {
+                return NotFound("Remind not found");
+            }
+            var exerciseRemind = await _exerciseService.GetByTkIdAsync(tkId);
+            if (exerciseRemind != null)
+            {
+                return NotFound("Remind not found");
+            }
+            var sleepRemind = await _sleepService.GetByTkIdAsync(tkId);
+            if (sleepRemind != null)
+            {
+                return NotFound("Remind not found");
+            }
+            var drinkWaterRemind = await _drinkWaterService.GetByTkIdAsync(tkId);
+            if (drinkWaterRemind != null)
+            {
+                return NotFound("Remind not found");
+            }
+            return Ok(new
+            {
+                water = drinkWaterRemind != null,
+                sleep = sleepRemind != null,
+                exercise = exerciseRemind != null,
+                medicine = medicineRemind != null
+            });
+        }
+
     }
 }

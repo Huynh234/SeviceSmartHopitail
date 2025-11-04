@@ -72,7 +72,7 @@ namespace SeviceSmartHopitail.Services
         {
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
-            tk.UpdateAt = DateTime.UtcNow;
+            tk.UpdateAt = DateTime.Now;
             tk.LockStatus = false; // 0 = khóa
             await _db.SaveChangesAsync();
             return true;
@@ -83,7 +83,7 @@ namespace SeviceSmartHopitail.Services
         {
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
-            tk.UpdateAt = DateTime.UtcNow;
+            tk.UpdateAt = DateTime.Now;
             tk.LockStatus = true; // 1 = mở
             await _db.SaveChangesAsync();
             return true;
@@ -94,7 +94,7 @@ namespace SeviceSmartHopitail.Services
         {
             var tk = await _db.TaiKhoans.FindAsync(id);
             if (tk == null) return false;
-            tk.UpdateAt = DateTime.UtcNow;
+            tk.UpdateAt = DateTime.Now;
             tk.PasswordHash = HashPassword(newPassword);
             await _db.SaveChangesAsync();
             return true;

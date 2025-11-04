@@ -19,7 +19,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<Object?> GetTodayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
             var record = await _db.BloodSugarRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorrow)
@@ -35,7 +35,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<Object?> GetYesterdayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var yesterday = today.AddDays(-1);
             var record = await _db.BloodSugarRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= yesterday && r.RecordedAt < today)
@@ -51,7 +51,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<BloodSugarRecord> CreateAsync(CreateBloodSugarRecord model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             bool exists = await _db.BloodSugarRecords
                 .AnyAsync(r => r.UserProfileId == model.UserProfileId && r.RecordedAt >= today);
             if (exists)
@@ -62,7 +62,7 @@ namespace SeviceSmartHopitail.Services.Health
                 UserProfileId = model.UserProfileId,
                 BloodSugar = model.BloodSugar,
                 Note = model.Note,
-                RecordedAt = DateTime.UtcNow
+                RecordedAt = DateTime.Now
             };
 
             _db.BloodSugarRecords.Add(rec);
@@ -72,7 +72,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<BloodSugarRecord?> UpdateTodayAsync(int userProfileId, UpdateBloodSugarR model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
             var record = await _db.BloodSugarRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorrow)
@@ -82,7 +82,7 @@ namespace SeviceSmartHopitail.Services.Health
 
             record.BloodSugar = model.BloodSugar;
             record.Note = model.Note;
-            record.RecordedAt = DateTime.UtcNow;
+            record.RecordedAt = DateTime.Now;
 
             await _db.SaveChangesAsync();
             return record;
@@ -99,7 +99,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Biểu đồ đường huyết =====================
         public async Task<object?> GetBloodSugarChartDataAsync(int userProfileId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
 
             var records = await _db.BloodSugarRecords
@@ -134,7 +134,7 @@ namespace SeviceSmartHopitail.Services.Health
          // ===================== Trung bình đường huyết =====================
         public async Task<object?> GetAverageBloodSugarAsync(int userProfileId, int days = 30)
         {
-            var endDate = DateTime.UtcNow;
+            var endDate = DateTime.Now;
             var startDate = endDate.AddDays(-days);
 
             var records = await _db.BloodSugarRecords
@@ -177,7 +177,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Báo cáo tổng hợp 7 ngày đường huyết =====================
         public async Task<object?> Get7DaySummaryAsync(int userProfileId)
         {
-            var endDate = DateTime.UtcNow;
+            var endDate = DateTime.Now;
             var startDate = endDate.AddDays(-7);
 
             // Lấy dữ liệu trong 7 ngày gần nhất

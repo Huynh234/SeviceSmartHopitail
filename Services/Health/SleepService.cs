@@ -55,7 +55,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<object?> GetTodayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorow = today.AddDays(1);
             var record = await _db.SleepRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorow)
@@ -71,7 +71,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<object?> GetYesterdayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var yesterday = today.AddDays(-1);
             var record = await _db.SleepRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= yesterday && r.RecordedAt < today)
@@ -87,7 +87,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<SleepRecord> CreateAsync(CreateSleepRecord model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             bool exists = await _db.SleepRecords
                 .AnyAsync(r => r.UserProfileId == model.UserProfileId && r.RecordedAt >= today);
             if (exists)
@@ -104,7 +104,7 @@ namespace SeviceSmartHopitail.Services.Health
                 WakeTime = wakeTim,
                 HoursSleep = hoursSlee,
                 Note = model.Note,
-                RecordedAt = DateTime.UtcNow
+                RecordedAt = DateTime.Now
             };
 
             _db.SleepRecords.Add(rec);
@@ -114,7 +114,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<SleepRecord?> UpdateTodayAsync(int userProfileId, UpdateSleepR model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorow = today.AddDays(1);
             var record = await _db.SleepRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorow)
@@ -131,7 +131,7 @@ namespace SeviceSmartHopitail.Services.Health
             record.WakeTime = wakeTim;
             record.HoursSleep = hoursSlee;
             record.Note = model.Note;
-            record.RecordedAt = DateTime.UtcNow;
+            record.RecordedAt = DateTime.Now;
 
             await _db.SaveChangesAsync();
             return record;
@@ -140,7 +140,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== So sánh giấc ngủ =====================
         public async Task<object> CompareWithPrevious(int ProID)
         {
-            var toda = DateTime.UtcNow.Date;
+            var toda = DateTime.Now.Date;
             var tomorow = toda.AddDays(1);
             var today = await _db.SleepRecords
                 .Where(r => r.UserProfileId == ProID && r.RecordedAt >= toda && r.RecordedAt < tomorow)
@@ -191,7 +191,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Biểu đồ giấc ngủ =====================
         public async Task<object?> GetSleepChartDataAsync(int userProfileId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
 
             var records = await _db.SleepRecords
@@ -227,7 +227,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Trung bình giấc ngủ tháng =====================
         public async Task<double> GetAverageSleepAsync(int userProfileId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
 
             var records = await _db.SleepRecords

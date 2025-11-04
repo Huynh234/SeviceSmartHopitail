@@ -36,5 +36,9 @@ namespace SeviceSmartHopitail.Services.Remind
             await _db.SaveChangesAsync();
             return true;
         }
+        public async Task<RemindTakeMedicine?> GetByTkIdAsync(int tkId)
+        {
+            return await _db.RemindTakeMedicines.FirstOrDefaultAsync(r => r.TkId == tkId);
+        }
     }
 }

@@ -160,7 +160,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<object?> GetRecentlyAsync(int ProID)
         {
-            var record = await _db.HeartRateRecords.Where(x => x.UserProfileId == ProID).OrderBy(x => x.RecordedAt).FirstOrDefaultAsync();
+            var record = await _db.HeartRateRecords.Where(x => x.UserProfileId == ProID).OrderByDescending(x => x.RecordedAt).FirstOrDefaultAsync();
 
             if (record == null)
                 return null;
@@ -172,6 +172,65 @@ namespace SeviceSmartHopitail.Services.Health
             {
                 Record = record,
                 HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri)
+            };
+        }
+        // ===================== Báo cáo tổng hợp 7 ngày nhịp tim =====================
+        public async Task<object?> Get7DaySummaryAsync(int userProfileId)
+        {
+            var endDate = DateTime.UtcNow;
+            var startDate = endDate.AddDays(-7);
+
+            // Lấy dữ liệu 7 ngày gần nhất
+            var records = await _db.HeartRateRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= startDate &&
+                            r.RecordedAt <= endDate)
+                .OrderBy(r => r.RecordedAt)
+                .ToListAsync();
+
+            if (records.Count == 0)
+                return null;
+
+            // Tính toán cơ bản
+            var avg = Math.Round(records.Average(r => r.HeartRate), 2);
+            var max = records.Max(r => r.HeartRate);
+            var min = records.Min(r => r.HeartRate);
+            var latest = records.OrderByDescending(r => r.RecordedAt).First();
+
+            // Lấy ngưỡng cảnh báo người dùng
+            var pri = await _db.PriWarnings.FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
+
+            // Đánh giá theo cảnh báo
+            string avgAlert = _alertService.GetHeartRateAlert((decimal) avg, pri);
+            string currentAlert = _alertService.GetHeartRateAlert(latest.HeartRate, pri);
+
+            // Tạo đánh giá tổng quan
+            string evaluation;
+            if (avg > (pri?.MaxHeartRate ?? 100))
+                evaluation = "Nhịp tim trung bình cao — có thể bạn đang căng thẳng hoặc vận động nhiều.";
+            else if (avg < (pri?.MinHeartRate ?? 60))
+                evaluation = "Nhịp tim trung bình thấp — nên theo dõi nếu có dấu hiệu mệt mỏi hoặc chóng mặt.";
+            else
+                evaluation = "Nhịp tim trung bình ổn định trong phạm vi bình thường.";
+
+            // Kết quả trả về
+            return new
+            {
+                UserProfileId = userProfileId,
+                From = startDate.ToString("dd/MM/yyyy"),
+                To = endDate.ToString("dd/MM/yyyy"),
+                Average = avg,
+                Max = max,
+                Min = min,
+                Current = new
+                {
+                    Value = latest.HeartRate,
+                    RecordedAt = latest.RecordedAt.ToString("dd/MM/yyyy HH:mm"),
+                    Alert = currentAlert
+                },
+                AverageAlert = avgAlert,
+                Evaluation = evaluation,
+                RecordCount = records.Count
             };
         }
 

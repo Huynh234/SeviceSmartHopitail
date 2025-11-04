@@ -4,7 +4,7 @@ namespace SeviceSmartHopitail.Services.Profiles
 {
     public class HealthAlertService
     {
-        public string GetHeartRateAlert(int heartRate, PriWarning? pri)
+        public string GetHeartRateAlert(decimal heartRate, PriWarning? pri)
         {
             int min = pri?.MinHeartRate ?? 60;
             int max = pri?.MaxHeartRate ?? 100;

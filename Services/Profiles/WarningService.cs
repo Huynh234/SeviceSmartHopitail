@@ -17,6 +17,10 @@ namespace SeviceSmartHopitail.Services.Profiles
         // Thêm mới cảnh báo cá nhân
         public async Task<PriWarning> CreateAsync(CPWarning warning)
         {
+            var w = _db.PriWarnings.FirstOrDefault(x => x.UserProfileId == warning.UserProfileId);
+            if (w != null) {
+                return null;
+            }
             var newWarning = new PriWarning
             {
                 UserProfileId = warning.UserProfileId!.Value,

@@ -1,4 +1,5 @@
-﻿using SeviceSmartHopitail.Models.Reminds;
+﻿using SeviceSmartHopitail.Models.AI;
+using SeviceSmartHopitail.Models.Reminds;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.CompilerServices;
@@ -34,5 +35,6 @@ namespace SeviceSmartHopitail.Models.Infomation
         public RemindExercise? RemindExercise { get; set; }
         public RemindDrinkWater? RemindDrinkWater { get; set; }
         public RemindTakeMedicine? RemindTakeMedicine { get; set; }
+        public ICollection<QuestionLog>? QuestionLogs { get; set; }
     }
 }

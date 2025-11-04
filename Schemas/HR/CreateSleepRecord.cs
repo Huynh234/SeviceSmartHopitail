@@ -7,7 +7,8 @@ namespace SeviceSmartHopitail.Schemas.HR
         public int UserProfileId { get; set; }
 
         [Required]
-        public decimal HoursSleep { get; set; } // hours
+        public string TimeSleep { get; set; } = "";// hours
+        public string TimeWake { get; set; } = "";
 
         public string? Note { get; set; }
     }

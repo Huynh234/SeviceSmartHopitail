@@ -22,7 +22,7 @@ namespace SeviceSmartHopitail.Models.Health
         [Required]
         public int Diastolic { get; set; }
 
-        public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
+        public DateTime RecordedAt { get; set; } = DateTime.Now;
 
         public string? Note { get; set; }
 

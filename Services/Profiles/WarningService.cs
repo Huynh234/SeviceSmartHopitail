@@ -35,7 +35,7 @@ namespace SeviceSmartHopitail.Services.Profiles
                 MinSleep = warning.MinSleep,
                 MaxSleep = warning.MaxSleep,
                 CreatedAt = warning.CreatedAt,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.Now
             };
 
             await _db.PriWarnings.AddAsync(newWarning);
@@ -62,7 +62,7 @@ namespace SeviceSmartHopitail.Services.Profiles
             existing.MaxDiastolic = warning.MaxDiastolic;
             existing.MinSleep = warning.MinSleep;
             existing.MaxSleep = warning.MaxSleep;
-            existing.UpdatedAt = DateTime.UtcNow;
+            existing.UpdatedAt = DateTime.Now;
 
             await _db.SaveChangesAsync();
             return existing;

@@ -19,7 +19,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ========== Lấy record hôm nay ==========
         public async Task<Object?> GetTodayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
 
             var record = await _db.HeartRateRecords
@@ -38,7 +38,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<Object?> GetYesterdayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var yesterday = today.AddDays(-1);
 
             var record = await _db.HeartRateRecords
@@ -58,7 +58,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ========== Tạo record ==========
         public async Task<HeartRateRecord> CreateAsync(CreateHeartRateRecord model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
 
             // kiểm tra trùng trong ngày
             bool exists = await _db.HeartRateRecords
@@ -73,7 +73,7 @@ namespace SeviceSmartHopitail.Services.Health
                 UserProfileId = model.UserProfileId,
                 HeartRate = model.HeartRate,
                 Note = model.Note,
-                RecordedAt = DateTime.UtcNow
+                RecordedAt = DateTime.Now
             };
 
             _db.HeartRateRecords.Add(record);
@@ -84,7 +84,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ========== Cập nhật ==========
         public async Task<HeartRateRecord?> UpdateTodayAsync(int userProfileId, UpdateHeartRateR model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
 
             var record = await _db.HeartRateRecords
@@ -97,7 +97,7 @@ namespace SeviceSmartHopitail.Services.Health
 
             record.HeartRate = model.HeartRate;
             record.Note = model.Note;
-            record.RecordedAt = DateTime.UtcNow;
+            record.RecordedAt = DateTime.Now;
             await _db.SaveChangesAsync();
             return record;
         }
@@ -113,7 +113,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Biểu đồ nhịp tim =====================
         public async Task<object?> GetHeartRateChartDataAsync(int userProfileId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
 
             var records = await _db.HeartRateRecords
@@ -148,7 +148,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<double> GetAverageHeartRateAsync(int userProfileId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
             var records = await _db.HeartRateRecords
                 .Where(r => r.UserProfileId == userProfileId &&
@@ -177,7 +177,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Báo cáo tổng hợp 7 ngày nhịp tim =====================
         public async Task<object?> Get7DaySummaryAsync(int userProfileId)
         {
-            var endDate = DateTime.UtcNow;
+            var endDate = DateTime.Now;
             var startDate = endDate.AddDays(-7);
 
             // Lấy dữ liệu 7 ngày gần nhất

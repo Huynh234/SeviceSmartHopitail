@@ -29,8 +29,8 @@ namespace SeviceSmartHopitail.Models.Infomation
         public string? Address { get; set; }
         public bool Check { get; set; } = false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
         // === Thêm navigation tới PriWarning (1–1) ===
         public PriWarning? PriWarning { get; set; }
         // === Liên kết tới các bảng sức khỏe mới ===

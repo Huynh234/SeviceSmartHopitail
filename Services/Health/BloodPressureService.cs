@@ -18,7 +18,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<Object?> GetTodayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
             var record = await _db.BloodPressureRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorrow)
@@ -37,7 +37,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<Object?> GetYesterdayAsync(int userProfileId)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var yesterday = today.AddDays(-1);
             var record = await _db.BloodPressureRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= yesterday && r.RecordedAt < today)
@@ -57,7 +57,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<BloodPressureRecord> CreateAsync(CreateBloodPressureRecord model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             bool exists = await _db.BloodPressureRecords
                 .AnyAsync(r => r.UserProfileId == model.UserProfileId && r.RecordedAt >= today);
             if (exists)
@@ -69,7 +69,7 @@ namespace SeviceSmartHopitail.Services.Health
                 Systolic = model.Systolic,
                 Diastolic = model.Diastolic,
                 Note = model.Note,
-                RecordedAt = DateTime.UtcNow
+                RecordedAt = DateTime.Now
             };
 
             _db.BloodPressureRecords.Add(rec);
@@ -79,7 +79,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<BloodPressureRecord?> UpdateTodayAsync(int userProfileId, UpdateBloodPressureR model)
         {
-            var today = DateTime.UtcNow.Date;
+            var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
             var record = await _db.BloodPressureRecords
                 .Where(r => r.UserProfileId == userProfileId && r.RecordedAt >= today && r.RecordedAt < tomorrow)
@@ -90,7 +90,7 @@ namespace SeviceSmartHopitail.Services.Health
             record.Systolic = model.Systolic;
             record.Diastolic = model.Diastolic;
             record.Note = model.Note;
-            record.RecordedAt = DateTime.UtcNow;
+            record.RecordedAt = DateTime.Now;
 
             await _db.SaveChangesAsync();
             return record;
@@ -116,7 +116,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Biểu đồ huyết áp =====================
         public async Task<object?> GetBloodPressureChartDataAsync(int userProfileId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
 
             var records = await _db.BloodPressureRecords
@@ -161,7 +161,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<object?> GetBloodPressureChartBydayAsync(int userProfileId, int about)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             var oneMonthAgo = now.AddMonths(-1);
 
             if (about == 7)
@@ -217,7 +217,7 @@ namespace SeviceSmartHopitail.Services.Health
         // ===================== Trung bình huyết áp (30 ngày gần nhất) =====================
         public async Task<object?> GetAverageBloodPressureAsync(int userProfileId, int days = 30)
         {
-            var endDate = DateTime.UtcNow;
+            var endDate = DateTime.Now;
             var startDate = endDate.AddDays(-days);
 
             var records = await _db.BloodPressureRecords

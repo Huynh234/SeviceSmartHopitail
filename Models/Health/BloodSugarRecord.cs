@@ -19,7 +19,7 @@ namespace SeviceSmartHopitail.Models.Health
         [Required]
         public decimal BloodSugar { get; set; } // mg/dL
         public string? Note { get; set; }
-        public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
+        public DateTime RecordedAt { get; set; } = DateTime.Now;
 
         [NotMapped]
         public string BloodSugarAlert

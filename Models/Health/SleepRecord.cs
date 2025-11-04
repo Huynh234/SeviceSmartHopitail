@@ -30,7 +30,7 @@ namespace SeviceSmartHopitail.Models.Health
 
         public string? Note { get; set; }
 
-        public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
+        public DateTime RecordedAt { get; set; } = DateTime.Now;
 
         // Cảnh báo giấc ngủ
         [NotMapped]

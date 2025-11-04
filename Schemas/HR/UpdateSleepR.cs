@@ -2,7 +2,8 @@
 {
     public class UpdateSleepR
     {
-        public decimal HoursSleep { get; set; }
+        public string? TimeSleep { get; set; }
+        public string? TimeWake { get; set; }
         public string? Note { get; set; }
     }
 }

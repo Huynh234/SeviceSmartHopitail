@@ -16,13 +16,23 @@ namespace SeviceSmartHopitail.Models.Health
         [ForeignKey(nameof(UserProfileId))]
         public UserProfile UserProfile { get; set; } = null!;
 
+        // Giờ bắt đầu ngủ
         [Required]
-        public decimal HoursSleep { get; set; } // hours
+        public DateTime SleepTime { get; set; }
+
+        // Giờ thức dậy
+        [Required]
+        public DateTime WakeTime { get; set; }
+
+        // Giờ ngủ (được lưu trong DB, nhưng tính tự động)
+        [Required]
+        public decimal HoursSleep { get; set; }
 
         public string? Note { get; set; }
 
         public DateTime RecordedAt { get; set; } = DateTime.UtcNow;
 
+        // Cảnh báo giấc ngủ
         [NotMapped]
         public string SleepAlert
         {

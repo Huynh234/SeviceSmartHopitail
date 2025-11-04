@@ -1,10 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Services.Profiles;
-using Microsoft.EntityFrameworkCore;
-using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Models.Health;
+using SeviceSmartHopitail.Schemas.HR;
+using SeviceSmartHopitail.Services.Profiles;
 namespace SeviceSmartHopitail.Services.Health
 {
     public class BloodPressureService
@@ -30,10 +28,11 @@ namespace SeviceSmartHopitail.Services.Health
 
             var pri = await _db.PriWarnings
                 .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
-            return new{
+            return new
+            {
                 Record = record,
                 BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri)
-                };
+            };
         }
 
         public async Task<Object?> GetYesterdayAsync(int userProfileId)
@@ -49,10 +48,11 @@ namespace SeviceSmartHopitail.Services.Health
 
             var pri = await _db.PriWarnings
                 .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
-            return new{
+            return new
+            {
                 Record = record,
                 BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri)
-                };
+            };
         }
 
         public async Task<BloodPressureRecord> CreateAsync(CreateBloodPressureRecord model)
@@ -86,7 +86,7 @@ namespace SeviceSmartHopitail.Services.Health
                 .OrderByDescending(r => r.RecordedAt)
                 .FirstOrDefaultAsync();
             if (record == null) return null;
-            
+
             record.Systolic = model.Systolic;
             record.Diastolic = model.Diastolic;
             record.Note = model.Note;
@@ -95,7 +95,7 @@ namespace SeviceSmartHopitail.Services.Health
             await _db.SaveChangesAsync();
             return record;
         }
-         // ===================== So sánh huyết áp =====================
+        // ===================== So sánh huyết áp =====================
         public string CompareWithPrevious(BloodPressureRecord today, BloodPressureRecord? prev)
         {
             if (prev == null) return "Không có dữ liệu hôm trước";
@@ -127,6 +127,61 @@ namespace SeviceSmartHopitail.Services.Health
                 .ToListAsync();
 
             if (records.Count < 10) return null;
+
+            var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
+            var systolicData = records.Select(r => r.Systolic).ToList();
+            var diastolicData = records.Select(r => r.Diastolic).ToList();
+
+            var data = new
+            {
+                labels,
+                datasets = new[]
+                {
+                    new {
+                        label = "Systolic (mmHg)",
+                        fill = false,
+                        borderColor = "#42A5F5",
+                        yAxisID = "y",
+                        tension = 0.4,
+                        data = systolicData
+                    },
+                    new {
+                        label = "Diastolic (mmHg)",
+                        fill = false,
+                        borderColor = "#66BB6A",
+                        yAxisID = "y1",
+                        tension = 0.4,
+                        data = diastolicData
+                    }
+                }
+            };
+
+            return data;
+        }
+
+        public async Task<object?> GetBloodPressureChartBydayAsync(int userProfileId, int about)
+        {
+            var now = DateTime.UtcNow;
+            var oneMonthAgo = now.AddMonths(-1);
+
+            if (about == 7)
+            {
+                oneMonthAgo = now.AddDays(-7);
+            }
+            else
+            {
+                oneMonthAgo = now.AddMonths(-1);
+            }
+
+
+            var records = await _db.BloodPressureRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= oneMonthAgo &&
+                            r.RecordedAt <= now)
+                .OrderBy(r => r.RecordedAt)
+                .ToListAsync();
+
+            if (records.Count < 6) return null;
 
             var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
             var systolicData = records.Select(r => r.Systolic).ToList();

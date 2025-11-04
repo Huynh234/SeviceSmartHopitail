@@ -161,7 +161,7 @@ namespace SeviceSmartHopitail.Services.Health
 //================ lấy dữ liệu gần đây ========================
         public async Task<object?> GetRecentlyAsync(int ProID)
         {
-            var record = await _db.BloodSugarRecords.Where(x => x.UserProfileId == ProID).OrderBy(x => x.RecordedAt).FirstOrDefaultAsync();
+            var record = await _db.BloodSugarRecords.Where(x => x.UserProfileId == ProID).OrderByDescending(x => x.RecordedAt).FirstOrDefaultAsync();
 
             if (record == null)
                 return null;
@@ -172,6 +172,63 @@ namespace SeviceSmartHopitail.Services.Health
             return new {
                 Record = record,
                 BloodSugarcord = _alertService.GetBloodSugarAlert(record.BloodSugar, pri)
+            };
+        }
+        // ===================== Báo cáo tổng hợp 7 ngày đường huyết =====================
+        public async Task<object?> Get7DaySummaryAsync(int userProfileId)
+        {
+            var endDate = DateTime.UtcNow;
+            var startDate = endDate.AddDays(-7);
+
+            // Lấy dữ liệu trong 7 ngày gần nhất
+            var records = await _db.BloodSugarRecords
+                .Where(r => r.UserProfileId == userProfileId &&
+                            r.RecordedAt >= startDate &&
+                            r.RecordedAt <= endDate)
+                .OrderBy(r => r.RecordedAt)
+                .ToListAsync();
+
+            if (records.Count == 0)
+                return null;
+
+            // Tính toán
+            var avg = Math.Round(records.Average(r => r.BloodSugar), 2);
+            var max = records.Max(r => r.BloodSugar);
+            var min = records.Min(r => r.BloodSugar);
+            var latest = records.OrderByDescending(r => r.RecordedAt).First();
+
+            // Lấy ngưỡng cảnh báo người dùng
+            var pri = await _db.PriWarnings.FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
+
+            // Đánh giá tổng quan
+            string avgAlert = _alertService.GetBloodSugarAlert(avg, pri);
+            string currentAlert = _alertService.GetBloodSugarAlert(latest.BloodSugar, pri);
+
+            string overallEvaluation;
+            if (avg > (pri?.MaxBloodSugar ?? 140))
+                overallEvaluation = "Đường huyết trung bình cao — cần điều chỉnh chế độ ăn và sinh hoạt.";
+            else if (avg < (pri?.MinBloodSugar ?? 70))
+                overallEvaluation = "Đường huyết trung bình thấp — nên theo dõi tình trạng hạ đường huyết.";
+            else
+                overallEvaluation = "Đường huyết trung bình ổn định trong phạm vi bình thường.";
+
+            // Kết quả trả về
+            return new
+            {
+                UserProfileId = userProfileId,
+                From = startDate.ToString("dd/MM/yyyy"),
+                To = endDate.ToString("dd/MM/yyyy"),
+                Max = max,
+                Min = min,
+                Current = new
+                {
+                    Value = latest.BloodSugar,
+                    RecordedAt = latest.RecordedAt.ToString("dd/MM/yyyy HH:mm"),
+                    Alert = currentAlert
+                },
+                AverageAlert = avgAlert,
+                Evaluation = overallEvaluation,
+                RecordCount = records.Count
             };
         }
 

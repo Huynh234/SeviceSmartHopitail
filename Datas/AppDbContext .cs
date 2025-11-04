@@ -100,6 +100,12 @@ namespace SeviceSmartHopitail.Datas
                 .WithOne(r => r.TaiKhoan)
                 .HasForeignKey<RemindTakeMedicine>(r => r.TkId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<QuestionLog>()
+                .HasOne(q => q.TaiKhoan)
+                .WithMany(t => t.QuestionLogs)
+                .HasForeignKey(q => q.TkId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

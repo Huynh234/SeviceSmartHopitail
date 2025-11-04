@@ -24,6 +24,9 @@ namespace SeviceSmartHopitail.Controllers
 
             var result = await _warningService.CreateAsync(model);
 
+            if (result == null)
+                return Conflict(new { message = "Cảnh báo cho UserProfileId này đã tồn tại." });
+
             return Ok(result);
         }
         // Cập nhật cảnh báo theo ID

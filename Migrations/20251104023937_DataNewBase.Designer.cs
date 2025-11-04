@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeviceSmartHopitail.Datas;
 
@@ -11,9 +12,11 @@ using SeviceSmartHopitail.Datas;
 namespace SeviceSmartHopitail.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251104023937_DataNewBase")]
+    partial class DataNewBase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,8 +100,6 @@ namespace SeviceSmartHopitail.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TkId");
 
                     b.ToTable("QuestionLogs");
                 });
@@ -529,17 +530,6 @@ namespace SeviceSmartHopitail.Migrations
                     b.Navigation("IcdCode");
                 });
 
-            modelBuilder.Entity("SeviceSmartHopitail.Models.AI.QuestionLog", b =>
-                {
-                    b.HasOne("SeviceSmartHopitail.Models.Infomation.TaiKhoan", "TaiKhoan")
-                        .WithMany("QuestionLogs")
-                        .HasForeignKey("TkId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("TaiKhoan");
-                });
-
             modelBuilder.Entity("SeviceSmartHopitail.Models.AI.TextChunk", b =>
                 {
                     b.HasOne("SeviceSmartHopitail.Models.AI.IcdCode", "IcdCode")
@@ -668,8 +658,6 @@ namespace SeviceSmartHopitail.Migrations
 
             modelBuilder.Entity("SeviceSmartHopitail.Models.Infomation.TaiKhoan", b =>
                 {
-                    b.Navigation("QuestionLogs");
-
                     b.Navigation("RemindDrinkWater");
 
                     b.Navigation("RemindExercise");

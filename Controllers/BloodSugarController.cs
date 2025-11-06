@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Models.Health;
 using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Services.Health;
@@ -19,6 +20,7 @@ namespace SeviceSmartHopitail.Controllers
 
         /// Lấy dữ liệu đường huyết hôm nay của người dùng
 
+        [Authorize(Roles = "user")]
         [HttpGet("today/{userProfileId}")]
         public async Task<IActionResult> GetToday(int userProfileId)
         {
@@ -32,6 +34,7 @@ namespace SeviceSmartHopitail.Controllers
 
         /// Lấy dữ liệu đường huyết hôm qua
 
+        [Authorize(Roles = "user")]
         [HttpGet("yesterday/{userProfileId}")]
         public async Task<IActionResult> GetYesterday(int userProfileId)
         {
@@ -45,6 +48,7 @@ namespace SeviceSmartHopitail.Controllers
 
         /// Tạo bản ghi đường huyết mới cho hôm nay
 
+        [Authorize(Roles = "user")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateBloodSugarRecord model)
         {
@@ -69,6 +73,7 @@ namespace SeviceSmartHopitail.Controllers
 
         /// Cập nhật bản ghi đường huyết hôm nay
 
+        [Authorize(Roles = "user")]
         [HttpPut("update/{userProfileId}")]
         public async Task<IActionResult> Update(int userProfileId, [FromBody] UpdateBloodSugarR model)
         {
@@ -89,6 +94,7 @@ namespace SeviceSmartHopitail.Controllers
 
         /// So sánh đường huyết hôm nay và hôm qua
 
+        [Authorize(Roles = "user")]
         [HttpGet("compare/{userProfileId}")]
         public async Task<IActionResult> CompareTodayWithYesterday(int userProfileId)
         {
@@ -108,6 +114,7 @@ namespace SeviceSmartHopitail.Controllers
 
         /// Lấy dữ liệu biểu đồ đường huyết trong 1 tháng gần nhất
 
+        [Authorize(Roles = "user")]
         [HttpGet("chart/{userProfileId}")]
         public async Task<IActionResult> GetChartData(int userProfileId)
         {
@@ -117,6 +124,7 @@ namespace SeviceSmartHopitail.Controllers
 
             return Ok(data);
         }
+        [Authorize(Roles = "user")]
         [HttpGet("average/{userProfileId}")]
         public async Task<IActionResult> GetAverage(int userProfileId, [FromQuery] int days = 30)
         {
@@ -126,6 +134,7 @@ namespace SeviceSmartHopitail.Controllers
 
             return Ok(result);
         }
+        [Authorize(Roles = "user")]
         [HttpGet("Recently/{userProfileId}")]
         public async Task<IActionResult> GetRecent(int userProfileId)
         {

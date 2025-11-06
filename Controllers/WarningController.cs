@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Services.Profiles;
 
@@ -16,6 +17,7 @@ namespace SeviceSmartHopitail.Controllers
             _warningService = warningService;
         }
         // Tạo cảnh báo cá nhân mới
+        [Authorize(Roles = "user")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CPWarning model)
         {
@@ -30,29 +32,32 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(result);
         }
         // Cập nhật cảnh báo theo ID
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CPWarning model)
+        [Authorize(Roles = "user")]
+        [HttpPut("{ProFileid:int}")]
+        public async Task<IActionResult> Update(int ProFileid, [FromBody] CPWarning model)
         {
             if (model == null)
                 return BadRequest(new { message = "Dữ liệu cập nhật không hợp lệ." });
 
-            var updated = await _warningService.UpdateAsync(id, model);
+            var updated = await _warningService.UpdateAsync(ProFileid, model);
             if (updated == null)
                 return NotFound(new { message = "Không tìm thấy cảnh báo cần cập nhật." });
 
             return Ok(updated);
         }
         // Xóa cảnh báo theo ID
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        [Authorize(Roles = "user")]
+        [HttpDelete("{ProFileid:int}")]
+        public async Task<IActionResult> Delete(int ProFileid)
         {
-            var success = await _warningService.DeleteAsync(id);
+            var success = await _warningService.DeleteAsync(ProFileid);
             if (!success)
                 return NotFound(new { message = "Không tìm thấy cảnh báo cần xóa." });
 
             return Ok(new { message = "Xóa cảnh báo thành công." });
         }
         // Lấy cảnh báo theo UserProfileId
+        [Authorize(Roles = "user")]
         [HttpGet("user/{userProfileId:int}")]
         public async Task<IActionResult> GetByUserProfileId(int userProfileId)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Models;
 using SeviceSmartHopitail.Schemas.PF;
 using SeviceSmartHopitail.Services.Profiles;
@@ -17,6 +18,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // GET api/UserProfile/5
+        [Authorize(Roles = "user")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -26,6 +28,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // GET api/UserProfile/taiKhoan/5
+        [Authorize(Roles = "user")]
         [HttpGet("taiKhoan/{taiKhoanId}")]
         public async Task<IActionResult> GetByTaiKhoanId(int taiKhoanId)
         {
@@ -35,6 +38,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // POST api/UserProfile
+        [Authorize(Roles = "user")]
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateUserProfile profile, IFormFile? avatar)
         {
@@ -50,6 +54,7 @@ namespace SeviceSmartHopitail.Controllers
             return CreatedAtAction(nameof(GetById), new { id = created.HoSoId }, created);
         }
 
+        [Authorize(Roles = "user")]
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] CreateUserProfile profile, IFormFile? avatar)
         {
@@ -68,6 +73,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // PATCH api/UserProfile/avatar/5
+        [Authorize(Roles = "user")]
         [HttpPatch("avatar-updload/{id}")]
         public async Task<IActionResult> UpdateAvatar(int id, IFormFile avatar)
         {
@@ -85,6 +91,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // DELETE api/UserProfile/5
+        [Authorize(Roles = "user")]
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {

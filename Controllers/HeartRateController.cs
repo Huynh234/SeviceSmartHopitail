@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Models.Health;
 using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Services.Health;
@@ -17,6 +18,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// Lấy dữ liệu nhịp tim hôm nay của người dùng
+        [Authorize(Roles = "user")]
         [HttpGet("today/{userProfileId}")]
         public async Task<IActionResult> GetToday(int userProfileId)
         {
@@ -28,6 +30,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// Lấy dữ liệu nhịp tim hôm qua
+        [Authorize(Roles = "user")]
         [HttpGet("yesterday/{userProfileId}")]
         public async Task<IActionResult> GetYesterday(int userProfileId)
         {
@@ -39,6 +42,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// Tạo bản ghi nhịp tim mới cho hôm nay
+        [Authorize(Roles = "user")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateHeartRateRecord model)
         {
@@ -61,6 +65,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// Cập nhật bản ghi nhịp tim hôm nay
+        [Authorize(Roles = "user")]
         [HttpPut("update/{userProfileId}")]
         public async Task<IActionResult> Update(int userProfileId, [FromBody] UpdateHeartRateR model)
         {
@@ -79,6 +84,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// So sánh nhịp tim hôm nay và hôm qua
+        [Authorize(Roles = "user")]
         [HttpGet("compare/{userProfileId}")]
         public async Task<IActionResult> CompareTodayWithYesterday(int userProfileId)
         {
@@ -96,6 +102,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// Lấy dữ liệu biểu đồ nhịp tim trong 1 tháng gần nhất
+        [Authorize(Roles = "user")]
         [HttpGet("chart/{userProfileId}")]
         public async Task<IActionResult> GetChartData(int userProfileId)
         {
@@ -107,6 +114,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== API: Lấy trung bình nhịp tim =====================
+        [Authorize(Roles = "user")]
         [HttpGet("average/{userProfileId}")]
         public async Task<IActionResult> GetAverageHeartRate(int userProfileId)
         {
@@ -127,6 +135,7 @@ namespace SeviceSmartHopitail.Controllers
                 Period = "30 ngày gần nhất"
             });
         }
+        [Authorize(Roles = "user")]
         [HttpGet("Recently/{userProfileId}")]
         public async Task<IActionResult> GetRecent(int userProfileId)
         {

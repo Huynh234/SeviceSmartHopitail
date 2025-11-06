@@ -4,12 +4,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Services;
-using SeviceSmartHopitail.Services.MAIL;
 using SeviceSmartHopitail.Services.Health;
+using SeviceSmartHopitail.Services.MAIL;
 using SeviceSmartHopitail.Services.Profiles;
 using SeviceSmartHopitail.Services.RAG;
-using System.Text;
 using SeviceSmartHopitail.Services.Remind;
+using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,6 +85,32 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "SeviceSmartHopitail API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Nhập JWT token (không cần ghi chữ Bearer).",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,   // dùng Http thay vì ApiKey
+        Scheme = "bearer",                // swagger sẽ tự thêm chữ Bearer
+        BearerFormat = "JWT"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+{
+    {
+        new OpenApiSecurityScheme
+        {
+            Reference = new OpenApiReference
+            {
+                Type = ReferenceType.SecurityScheme,
+                Id = "Bearer"
+            },
+            In = ParameterLocation.Header,
+        },
+        new List<string>()
+    }
+});
 });
 
 // --- Cấu hình JWT
@@ -109,10 +136,13 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(secretKey),
+        RoleClaimType = ClaimTypes.Role,
+        NameClaimType = ClaimTypes.Name,
         ClockSkew = TimeSpan.Zero
     };
 });
-builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // --- Tự động apply migrations khi khởi động (không khuyến nghị cho production)
@@ -148,7 +178,6 @@ else
     app.UseSwaggerUI();
 }
 
-builder.Services.AddAuthorization();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");

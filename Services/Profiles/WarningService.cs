@@ -45,10 +45,10 @@ namespace SeviceSmartHopitail.Services.Profiles
         }
 
         // Cập nhật cảnh báo
-        public async Task<PriWarning?> UpdateAsync(int WId, CPWarning warning)
+        public async Task<PriWarning?> UpdateAsync(int PId, CPWarning warning)
         {
             var existing = await _db.PriWarnings
-                .FirstOrDefaultAsync(x => x.WarningId == WId);
+                .FirstOrDefaultAsync(x => x.UserProfileId == PId);
 
             if (existing == null) return null;
 
@@ -72,7 +72,7 @@ namespace SeviceSmartHopitail.Services.Profiles
         public async Task<bool> DeleteAsync(int warningId)
         {
             var existing = await _db.PriWarnings
-                .FirstOrDefaultAsync(x => x.WarningId == warningId);
+                .FirstOrDefaultAsync(x => x.UserProfileId == warningId);
 
             if (existing == null) return false;
 

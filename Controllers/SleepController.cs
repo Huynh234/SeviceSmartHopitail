@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models.Health;
 using SeviceSmartHopitail.Schemas.HR;
@@ -18,6 +19,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Lấy bản ghi giấc ngủ hôm nay =====================
+        [Authorize(Roles = "user")]
         [HttpGet("today/{userProfileId}")]
         public async Task<IActionResult> GetToday(int userProfileId)
         {
@@ -28,6 +30,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Lấy bản ghi giấc ngủ hôm qua =====================
+        [Authorize(Roles = "user")]
         [HttpGet("yesterday/{userProfileId}")]
         public async Task<IActionResult> GetYesterday(int userProfileId)
         {
@@ -38,6 +41,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Thêm mới bản ghi giấc ngủ =====================
+        [Authorize(Roles = "user")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateSleepRecord model)
         {
@@ -60,6 +64,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Cập nhật giấc ngủ hôm nay =====================
+        [Authorize(Roles = "user")]
         [HttpPut("today/{userProfileId}")]
         public async Task<IActionResult> UpdateToday(int userProfileId, [FromBody] UpdateSleepR model)
         {
@@ -78,6 +83,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== So sánh giấc ngủ hôm nay và hôm qua =====================
+        [Authorize(Roles = "user")]
         [HttpGet("compare/{userProfileId}")]
         public async Task<IActionResult> CompareSleep(int userProfileId)
         {
@@ -95,6 +101,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Biểu đồ giấc ngủ =====================
+        [Authorize(Roles = "user")]
         [HttpGet("chart/{userProfileId}")]
         public async Task<IActionResult> GetChartData(int userProfileId)
         {
@@ -105,6 +112,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Trung bình giấc ngủ tháng =====================
+        [Authorize(Roles = "user")]
         [HttpGet("average/{userProfileId}")]
         public async Task<IActionResult> GetAverage(int userProfileId)
         {
@@ -112,6 +120,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(new { AverageHours = avg });
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("Recently/{userProfileId}")]
         public async Task<IActionResult> GetRecent(int userProfileId)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Writers;
 using SeviceSmartHopitail.Models.Health;
 using SeviceSmartHopitail.Services.Health;
@@ -21,6 +22,7 @@ namespace SeviceSmartHopitail.Controllers
             _ss = ss;
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("totalView/{prId}")]
         public async Task<IActionResult> GetTotalViews(int prId)
         {
@@ -44,6 +46,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(totalViews);
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("chartbloodpressure/{prId}")]
         public async Task<IActionResult> GetHealthSummary(int prId, [FromQuery] int about) // Corrected attribute name
         {
@@ -55,6 +58,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(chat);
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("compare/{prId}")]
         public async Task<IActionResult> GetSleepSummary(int prId) // Corrected attribute name
         {
@@ -74,6 +78,7 @@ namespace SeviceSmartHopitail.Controllers
             });
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("comment/{prId}")]
         public async Task<IActionResult> GetHealthComments(int prId)
         {

@@ -22,6 +22,7 @@ namespace SeviceSmartHopitail.Controllers
             _qa = qa;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Ask([FromBody] AskDto dto, CancellationToken ct)
         {
@@ -33,6 +34,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(new { answer = answe });
         }
 
+        [Authorize]
         [HttpGet("History/{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {

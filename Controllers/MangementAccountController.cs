@@ -2,6 +2,7 @@
 using SeviceSmartHopitail.Services;
 using SeviceSmartHopitail.Models;
 using SeviceSmartHopitail.Schemas.TK;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SeviceSmartHopitail.Controllers
 {
@@ -17,6 +18,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // --- Lấy tất cả tài khoản ---
+        [Authorize(Roles = "admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -25,6 +27,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // --- Lấy tài khoản theo Id hoặc Email ---
+        [Authorize(Roles = "admin")]
         [HttpGet("find")]
         public async Task<IActionResult> Get([FromQuery] int? id, [FromQuery] string? email)
         {
@@ -34,6 +37,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // --- Xóa tài khoản ---
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -43,6 +47,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // --- Khóa tài khoản ---
+        [Authorize(Roles = "admin")]
         [HttpPut("lock/{id}")]
         public async Task<IActionResult> Lock(int id)
         {
@@ -52,6 +57,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // --- Mở khóa tài khoản ---
+        [Authorize(Roles = "admin")]
         [HttpPut("unlock/{id}")]
         public async Task<IActionResult> Unlock(int id)
         {
@@ -61,6 +67,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // --- Reset mật khẩu ---
+        [Authorize(Roles = "admin")]
         [HttpPut("reset-password/{id}")]
         public async Task<IActionResult> ResetPassword(int id, MangementRPassword dto)
         {
@@ -72,6 +79,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok("Đặt lại mật khẩu thành công");
         }
         // --- Đăng ký tài khoản mới ---
+        [Authorize(Roles = "admin")]
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterRequest request)
         {

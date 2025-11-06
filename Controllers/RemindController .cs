@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Schemas.RM;
 using SeviceSmartHopitail.Services.Remind;
 
@@ -24,6 +25,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ======================= UỐNG THUỐC ===========================
+        [Authorize(Roles = "user")]
         [HttpPost("take-medicine")]
         public async Task<IActionResult> CreateTakeMedicine([FromBody] CrAllRemind model)
         {
@@ -32,6 +34,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "user")]
         [HttpDelete("take-medicine/{id}")]
         public async Task<IActionResult> DeleteTakeMedicine(int id)
         {
@@ -40,6 +43,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ======================= TẬP THỂ DỤC ===========================
+        [Authorize(Roles = "user")]
         [HttpPost("exercise")]
         public async Task<IActionResult> CreateExercise([FromBody] CrAllRemind model)
         {
@@ -48,6 +52,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "user")]
         [HttpDelete("exercise/{id}")]
         public async Task<IActionResult> DeleteExercise(int id)
         {
@@ -56,6 +61,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ======================= NGỦ NGHỈ ===========================
+        [Authorize(Roles = "user")]
         [HttpPost("sleep")]
         public async Task<IActionResult> CreateSleep([FromBody] CrAllRemind model)
         {
@@ -64,6 +70,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "user")]
         [HttpDelete("sleep/{id}")]
         public async Task<IActionResult> DeleteSleep(int id)
         {
@@ -72,6 +79,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ======================= UỐNG NƯỚC ===========================
+        [Authorize(Roles = "user")]
         [HttpPost("drink-water")]
         public async Task<IActionResult> CreateDrinkWater([FromBody] CrAllRemind model)
         {
@@ -80,6 +88,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "user")]
         [HttpDelete("drink-water/{id}")]
         public async Task<IActionResult> DeleteDrinkWater(int id)
         {
@@ -87,6 +96,7 @@ namespace SeviceSmartHopitail.Controllers
             return success ? Ok("Deleted successfully") : NotFound("Remind not found");
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("all/{tkId}")]
         public async Task<IActionResult> DeleteAllReminds(int tkId)
         {

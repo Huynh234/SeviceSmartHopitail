@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Models.Health;
 using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Services.Health;
@@ -18,6 +19,7 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// Lấy dữ liệu huyết áp hôm nay của người dùng
+        [Authorize(Roles = "user")]
         [HttpGet("today/{userProfileId}")]
         public async Task<IActionResult> GetToday(int userProfileId)
         {
@@ -28,6 +30,7 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// Lấy dữ liệu huyết áp hôm qua
+        [Authorize(Roles = "user")]
         [HttpGet("yesterday/{userProfileId}")]
         public async Task<IActionResult> GetYesterday(int userProfileId)
         {
@@ -38,6 +41,7 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// Thêm bản ghi huyết áp mới cho hôm nay
+        [Authorize(Roles = "user")]
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateBloodPressureRecord model)
         {
@@ -57,6 +61,7 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// Cập nhật bản ghi huyết áp hôm nay
+        [Authorize(Roles = "user")]
         [HttpPut("update/{userProfileId}")]
         public async Task<IActionResult> Update(int userProfileId, [FromBody] UpdateBloodPressureR model)
         {
@@ -72,6 +77,7 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// So sánh huyết áp hôm nay và hôm qua
+        [Authorize(Roles = "user")]
         [HttpGet("compare/{userProfileId}")]
         public async Task<IActionResult> CompareTodayWithYesterday(int userProfileId)
         {
@@ -90,6 +96,7 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// Lấy dữ liệu biểu đồ huyết áp trong 1 tháng gần nhất
+        [Authorize(Roles = "user")]
         [HttpGet("chart/{userProfileId}")]
         public async Task<IActionResult> GetChartData(int userProfileId)
         {
@@ -97,6 +104,7 @@ namespace SeviceSmartHopitail.Controllers
             if (data == null) return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
             return Ok(data);
         }
+        [Authorize(Roles = "user")]
         [HttpGet("average/{userProfileId}")]
         public async Task<IActionResult> GetAverage(int userProfileId, [FromQuery] int days = 30)
         {
@@ -107,6 +115,7 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "user")]
         [HttpGet("Recently/{userProfileId}")]
         public async Task<IActionResult> GetRecent(int userProfileId)
         {

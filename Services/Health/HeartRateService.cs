@@ -164,14 +164,15 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null)
                 return null;
-
+            var today = DateTime.Now;
             var pri = await _db.PriWarnings
                 .FirstOrDefaultAsync(p => p.UserProfileId == ProID);
 
             return new
             {
                 Record = record,
-                HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri)
+                HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri),
+                writeHours = (today - record.RecordedAt).TotalHours,
             };
         }
         // ===================== Báo cáo tổng hợp 7 ngày nhịp tim =====================

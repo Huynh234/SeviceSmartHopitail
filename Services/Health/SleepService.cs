@@ -169,7 +169,7 @@ namespace SeviceSmartHopitail.Services.Health
                 sleepDurationCompare = "Thời gian ngủ giữ nguyên";
 
             // So sánh giờ bắt đầu ngủ
-            var timeDiff = (today.SleepTime - prev.SleepTime).TotalHours;
+            var timeDiff = (today.SleepTime - prev.SleepTime.AddDays(1)).TotalHours;
             string sleepTimeCompare;
 
             if (Math.Abs(timeDiff) < 0.25) // chênh < 15 phút
@@ -182,7 +182,9 @@ namespace SeviceSmartHopitail.Services.Health
             // Gộp kết quả
             return new
             {
-                SleepTime = sleepTimeCompare,
+
+                SleepTime = today.SleepTime,
+                Compare= sleepTimeCompare,
                 SleepDuration = sleepDurationCompare,
                 time = today.HoursSleep
             };
@@ -245,21 +247,22 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null)
                 return null;
-
+            var today = DateTime.Now;
             var pri = await _db.PriWarnings
                 .FirstOrDefaultAsync(p => p.UserProfileId == ProID);
 
             return new
             {
                 Record = record,
-                SleepAlert = _alertService.GetBloodSugarAlert(record.HoursSleep, pri)
+                SleepAlert = _alertService.GetBloodSugarAlert(record.HoursSleep, pri),
+                writeHours = (today - record.RecordedAt).TotalHours,
             };
         }
 
-        internal object CompareWithPrevious(object record1, object record2)
-        {
-            throw new NotImplementedException();
-        }
+        // internal object CompareWithPrevious(object record1, object record2)
+        // {
+        //     throw new NotImplementedException();
+        // }
 
     }
 }

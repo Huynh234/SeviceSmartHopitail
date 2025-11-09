@@ -92,7 +92,7 @@ namespace SeviceSmartHopitail.Services.Profiles
         }
 
         // Cập nhật hồ sơ
-        public async Task<UserProfile?> UpdateAsync(CreateUserProfile profile, MemoryStream avatarStream, int HoSoId)
+        public async Task<UserProfile?> UpdateAsync(CreateUserProfile profile, int HoSoId, MemoryStream? avatarStream = null)
         {
             var existing = await _db.UserProfiles.FindAsync(HoSoId);
             if (existing == null) return null;
@@ -106,7 +106,9 @@ namespace SeviceSmartHopitail.Services.Profiles
             existing.Height = profile.Height;
             existing.Address = profile.Adress;
             existing.Weight = profile.Weight;
-            existing.AvatarUrl = await UploadAvatarAsync(avatarStream, profile.FullName ?? "avarta" + HoSoId);
+            if(avatarStream != null){
+                existing.AvatarUrl = await UploadAvatarAsync(avatarStream, profile.FullName ?? "avarta" + HoSoId); 
+            }
             existing.Check = true;
             await _db.SaveChangesAsync();
             return existing;

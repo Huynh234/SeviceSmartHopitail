@@ -87,16 +87,16 @@ namespace SeviceSmartHopitail.Controllers
         [HttpGet("compare/{userProfileId}")]
         public async Task<IActionResult> CompareSleep(int userProfileId)
         {
-            var today = await _sleepService.GetTodayAsync(userProfileId);
-            var yesterday = await _sleepService.GetYesterdayAsync(userProfileId);
+            // var today = await _sleepService.GetTodayAsync(userProfileId);
+            // var yesterday = await _sleepService.GetYesterdayAsync(userProfileId);
 
-            if (today == null || yesterday == null)
-                return NotFound(new { message = "Không đủ dữ liệu để so sánh." });
+            // if (today == null || yesterday == null)
+            //     return NotFound(new { message = "Không đủ dữ liệu để so sánh." });
 
-            var todayRecord = ((dynamic)today).Record as SleepRecord;
-            var yesterRecord = ((dynamic)yesterday).Record as SleepRecord;
+            // var todayRecord = ((dynamic)today).Record as SleepRecord;
+            // var yesterRecord = ((dynamic)yesterday).Record as SleepRecord;
 
-            var result = _sleepService.CompareWithPrevious(todayRecord!, yesterRecord);
+            var result = _sleepService.CompareWithPrevious(userProfileId);
             return Ok(new { message = result });
         }
 

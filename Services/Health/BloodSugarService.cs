@@ -165,13 +165,15 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null)
                 return null;
-
+            var today = DateTime.Now;
             var pri = await _db.PriWarnings
                 .FirstOrDefaultAsync(p => p.UserProfileId == ProID);
 
-            return new {
+            return new
+            {
                 Record = record,
-                BloodSugarcord = _alertService.GetBloodSugarAlert(record.BloodSugar, pri)
+                BloodSugarcord = _alertService.GetBloodSugarAlert(record.BloodSugar, pri),
+                writeHours = (today - record.RecordedAt).TotalHours
             };
         }
         // ===================== Báo cáo tổng hợp 7 ngày đường huyết =====================

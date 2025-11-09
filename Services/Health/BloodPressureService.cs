@@ -252,14 +252,15 @@ namespace SeviceSmartHopitail.Services.Health
 
             if (record == null)
                 return null;
-
+            var today = DateTime.Now;
             var pri = await _db.PriWarnings
                 .FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
 
             return new
             {
                 Record = record,
-                BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri)
+                BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri),
+                writeHours = (today - record.RecordedAt).TotalHours,
             };
         }
 

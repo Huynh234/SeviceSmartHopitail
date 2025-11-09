@@ -66,7 +66,7 @@ namespace SeviceSmartHopitail.Controllers
                 stream.Position = 0;
             }
 
-            var updated = await _profileServices.UpdateAsync(profile, stream ?? new MemoryStream(), id);
+            var updated = await _profileServices.UpdateAsync(profile, id, stream ?? null);
             if (updated == null) return NotFound(new { message = "Không tìm thấy hồ sơ để cập nhật" });
 
             return Ok(updated);

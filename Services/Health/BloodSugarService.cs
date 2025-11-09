@@ -173,7 +173,7 @@ namespace SeviceSmartHopitail.Services.Health
             {
                 Record = record,
                 BloodSugarcord = _alertService.GetBloodSugarAlert(record.BloodSugar, pri),
-                writeHours = (today - record.RecordedAt).TotalHours
+                writeHours = (today - record.RecordedAt).ToString(@"hh\:mm")
             };
         }
         // ===================== Báo cáo tổng hợp 7 ngày đường huyết =====================

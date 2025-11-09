@@ -172,7 +172,7 @@ namespace SeviceSmartHopitail.Services.Health
             {
                 Record = record,
                 HeartRateAlert = _alertService.GetHeartRateAlert(record.HeartRate, pri),
-                writeHours = (today - record.RecordedAt).TotalHours,
+                writeHours = (today - record.RecordedAt).ToString(@"hh\:mm"),
             };
         }
         // ===================== Báo cáo tổng hợp 7 ngày nhịp tim =====================

@@ -260,7 +260,7 @@ namespace SeviceSmartHopitail.Services.Health
             {
                 Record = record,
                 BloodPressureAlert = _alertService.GetBloodPressureAlert(record.Systolic, record.Diastolic, pri),
-                writeHours = (today - record.RecordedAt).TotalHours,
+                writeHours = (today - record.RecordedAt).ToString(@"hh\:mm"),
             };
         }
 

@@ -142,6 +142,7 @@ namespace SeviceSmartHopitail.Services.Health
         {
             var toda = DateTime.Now.Date;
             var tomorow = toda.AddDays(1);
+
             var today = await _db.SleepRecords
                 .Where(r => r.UserProfileId == ProID && r.RecordedAt >= toda && r.RecordedAt < tomorow)
                 .OrderByDescending(r => r.RecordedAt)
@@ -156,39 +157,39 @@ namespace SeviceSmartHopitail.Services.Health
             if (prev == null || today == null)
                 return "Không có dữ liệu";
 
-            // So sánh thời lượng ngủ
+            // ===== So sánh thời lượng ngủ =====
             var diffHours = today.HoursSleep - prev.HoursSleep;
             var percent = (diffHours / prev.HoursSleep) * 100;
 
             string sleepDurationCompare;
             if (diffHours > 0)
-                sleepDurationCompare = $"Thời gian ngủ tăng {diffHours:F1}h (+{percent:F1}%)";
+                sleepDurationCompare = $"Thời gian ngủ tăng {FormatDuration((double) diffHours)} (+{percent:F1}%)";
             else if (diffHours < 0)
-                sleepDurationCompare = $"Thời gian ngủ giảm {-diffHours:F1}h ({percent:F1}%)";
+                sleepDurationCompare = $"Thời gian ngủ giảm {FormatDuration((double) -diffHours)} ({percent:F1}%)";
             else
                 sleepDurationCompare = "Thời gian ngủ giữ nguyên";
 
-            // So sánh giờ bắt đầu ngủ
-            var timeDiff = (today.SleepTime - prev.SleepTime.AddDays(1)).TotalHours;
+            // ===== So sánh giờ bắt đầu ngủ =====
+            var timeDiff = (today.SleepTime - prev.SleepTime.AddDays(1)).TotalMinutes; // đổi sang phút cho dễ tính
             string sleepTimeCompare;
 
-            if (Math.Abs(timeDiff) < 0.25) // chênh < 15 phút
+            if (Math.Abs(timeDiff) < 15)
                 sleepTimeCompare = "Giờ đi ngủ gần như giống hôm trước";
             else if (timeDiff > 0)
-                sleepTimeCompare = $"Hôm nay đi ngủ muộn hơn {timeDiff:F1}h";
+                sleepTimeCompare = $"Hôm nay đi ngủ muộn hơn {Math.Floor(timeDiff / 60)}h {(int)(timeDiff % 60)}p";
             else
-                sleepTimeCompare = $"Hôm nay đi ngủ sớm hơn {-timeDiff:F1}h";
+                sleepTimeCompare = $"Hôm nay đi ngủ sớm hơn {Math.Floor(-timeDiff / 60)}h {(int)(-timeDiff % 60)}p";
 
-            // Gộp kết quả
+            // ===== Kết quả =====
             return new
             {
-
-                SleepTime = today.SleepTime,
-                Compare= sleepTimeCompare,
+                SleepTime = today.SleepTime.ToString("HH:mm"),
+                Compare = sleepTimeCompare,
                 SleepDuration = sleepDurationCompare,
-                time = today.HoursSleep
+                time = FormatDuration((double)today.HoursSleep)
             };
         }
+
 
         // ===================== Biểu đồ giấc ngủ =====================
         public async Task<object?> GetSleepChartDataAsync(int userProfileId)
@@ -255,14 +256,16 @@ namespace SeviceSmartHopitail.Services.Health
             {
                 Record = record,
                 SleepAlert = _alertService.GetBloodSugarAlert(record.HoursSleep, pri),
-                writeHours = (today - record.RecordedAt).TotalHours,
+                writeHours = (today - record.RecordedAt).ToString(@"hh\:mm"),
             };
         }
 
-        // internal object CompareWithPrevious(object record1, object record2)
-        // {
-        //     throw new NotImplementedException();
-        // }
+        public string FormatDuration(double hours)
+        {
+            int h = (int)hours;
+            int m = (int)Math.Round((hours - h) * 60);
+            return $"{h}h {m}p";
+        }
 
     }
 }

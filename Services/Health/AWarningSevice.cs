@@ -4,10 +4,10 @@ using SeviceSmartHopitail.Models.Health;
 
 namespace SeviceSmartHopitail.Services.Health
 {
-    public class WarningSevice
+    public class AWarningSevice
     {
         private readonly AppDbContext _db;
-        public WarningSevice(AppDbContext db)
+        public AWarningSevice(AppDbContext db)
         {
             _db = db;
         }

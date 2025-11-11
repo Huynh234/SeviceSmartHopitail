@@ -7,11 +7,11 @@ namespace SeviceSmartHopitail.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WarningsController : ControllerBase
+    public class AutoWarningsController : ControllerBase
     {
-        private readonly WarningSevice _warningService;
+        private readonly AWarningSevice _warningService;
 
-        public WarningsController(WarningSevice warningService)
+        public AutoWarningsController(AWarningSevice warningService)
         {
             _warningService = warningService;
         }

@@ -39,7 +39,7 @@ builder.Services.AddScoped<WarningService>();
 builder.Services.AddScoped<HealthAlertService>();
 builder.Services.AddScoped<RmAllrSevice>();
 builder.Services.AddScoped<ReportService>();
-builder.Services.AddScoped<WarningService>();
+builder.Services.AddScoped<AWarningSevice>();
 
 // Gemini SDK client wrapper: nên để Singleton nếu SDK sử dụng HttpClient/kết nối bên trong
 builder.Services.AddSingleton<IGeminiClient, GeminiClientWrapper>();

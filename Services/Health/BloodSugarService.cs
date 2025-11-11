@@ -67,6 +67,50 @@ namespace SeviceSmartHopitail.Services.Health
 
             _db.BloodSugarRecords.Add(rec);
             await _db.SaveChangesAsync();
+
+            var pri = await _db.PriWarnings
+        .FirstOrDefaultAsync(p => p.UserProfileId == model.UserProfileId);
+
+            // Dùng ngưỡng mặc định nếu không có cá nhân hóa
+            decimal min = pri?.MinBloodSugar ?? 70m;
+            decimal max = pri?.MaxBloodSugar ?? 140m;
+
+            string? message = null;
+            string icon = "";
+            string title = "Cảnh báo đường huyết";
+            string point = "BloodSugar";
+
+            if (model.BloodSugar > max)
+            {
+                message = $"Đường huyết {model.BloodSugar} mg/dL vượt ngưỡng tối đa ({max} mg/dL).";
+                icon = "arrow-up";
+            }
+            else if (model.BloodSugar < min)
+            {
+                message = $"Đường huyết {model.BloodSugar} mg/dL thấp hơn ngưỡng tối thiểu ({min} mg/dL).";
+                icon = "arrow-down";
+            }
+
+            // Nếu có cảnh báo → lưu vào bảng AutoWarning
+            if (message != null)
+            {
+                var warning = new AutoWarning
+                {
+                    UserProfileId = model.UserProfileId,
+                    point = point,
+                    icon = icon,
+                    title = title,
+                    node = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    mess = message,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+
+                _db.Add(warning);
+                await _db.SaveChangesAsync();
+            }
+
+
             return rec;
         }
 
@@ -97,11 +141,8 @@ namespace SeviceSmartHopitail.Services.Health
             else return "Đường huyết giữ nguyên";
         }
         // ===================== Biểu đồ đường huyết =====================
-        public async Task<object?> GetBloodSugarChartDataAsync(int userProfileId)
+        public async Task<object?> GetBloodSugarChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
         {
-            var now = DateTime.Now;
-            var oneMonthAgo = now.AddMonths(-1);
-
             var records = await _db.BloodSugarRecords
                 .Where(r => r.UserProfileId == userProfileId &&
                             r.RecordedAt >= oneMonthAgo &&

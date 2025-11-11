@@ -51,6 +51,10 @@ namespace SeviceSmartHopitail.Controllers
             }
 
             var created = await _profileServices.CreateAsync(profile, stream ?? new MemoryStream());
+            if (created == null)
+            {
+                return BadRequest(new { message = "Hồ sơ cho tài khoản này đã tồn tại." });
+            }
             return CreatedAtAction(nameof(GetById), new { id = created.HoSoId }, created);
         }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SeviceSmartHopitail.Datas;
 
@@ -11,9 +12,11 @@ using SeviceSmartHopitail.Datas;
 namespace SeviceSmartHopitail.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251111025359_dataREmindnew")]
+    partial class dataREmindnew
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,30 +132,6 @@ namespace SeviceSmartHopitail.Migrations
                     b.HasIndex("IcdCodeId");
 
                     b.ToTable("TextChunks");
-                });
-
-            modelBuilder.Entity("SeviceSmartHopitail.Models.Health.AutoWarning", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserProfileId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserProfileId");
-
-                    b.ToTable("AutoWarnings");
                 });
 
             modelBuilder.Entity("SeviceSmartHopitail.Models.Health.BloodPressureRecord", b =>
@@ -443,9 +422,6 @@ namespace SeviceSmartHopitail.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DayOfWkeek")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("LastSent")
                         .HasColumnType("datetime2");
 
@@ -495,17 +471,6 @@ namespace SeviceSmartHopitail.Migrations
                         .HasForeignKey("IcdCodeId");
 
                     b.Navigation("IcdCode");
-                });
-
-            modelBuilder.Entity("SeviceSmartHopitail.Models.Health.AutoWarning", b =>
-                {
-                    b.HasOne("SeviceSmartHopitail.Models.Infomation.UserProfile", "UserProfile")
-                        .WithMany("AutoWarnings")
-                        .HasForeignKey("UserProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("UserProfile");
                 });
 
             modelBuilder.Entity("SeviceSmartHopitail.Models.Health.BloodPressureRecord", b =>
@@ -603,8 +568,6 @@ namespace SeviceSmartHopitail.Migrations
 
             modelBuilder.Entity("SeviceSmartHopitail.Models.Infomation.UserProfile", b =>
                 {
-                    b.Navigation("AutoWarnings");
-
                     b.Navigation("HealthBloodPressures");
 
                     b.Navigation("HealthBloodSugars");

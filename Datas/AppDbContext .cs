@@ -18,16 +18,12 @@ namespace SeviceSmartHopitail.Datas
         public DbSet<TaiKhoan> TaiKhoans { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<PriWarning> PriWarnings { get; set; } = null!;
-        public DbSet<RemindersSleep> RemindersSleeps { get; set; } = null!;
-        public DbSet<RemindExercise> RemindExercises { get; set; } = null!;
-        public DbSet<RemindDrinkWater> RemindDrinkWaters { get; set; } = null!;
-        public DbSet<RemindTakeMedicine> RemindTakeMedicines { get; set; } = null!;
-
+        public DbSet<RemindAll> RemindAlls { get; set; } = null!;
         public DbSet<HeartRateRecord> HeartRateRecords { get; set; }
         public DbSet<BloodPressureRecord> BloodPressureRecords { get; set; }
         public DbSet<BloodSugarRecord> BloodSugarRecords { get; set; }
         public DbSet<SleepRecord> SleepRecords { get; set; }
-
+        public DbSet<AutoWarning> AutoWarnings { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -46,12 +42,6 @@ namespace SeviceSmartHopitail.Datas
                 .HasOne(up => up.PriWarning)
                 .WithOne(pw => pw.UserProfile)
                 .HasForeignKey<PriWarning>(pw => pw.UserProfileId);
-
-            modelBuilder.Entity<TaiKhoan>()
-                .HasOne(t => t.RemindersSleep)
-                .WithOne(r => r.TaiKhoan)
-                .HasForeignKey<RemindersSleep>(r => r.TkId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             // --- UserProfile <-> HealthHeartRate (1-n)
             modelBuilder.Entity<UserProfile>()
@@ -81,30 +71,23 @@ namespace SeviceSmartHopitail.Datas
                 .HasForeignKey(s => s.UserProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<TaiKhoan>()
-                .HasOne(t => t.RemindExercise)
-                .WithOne(r => r.TaiKhoan)
-                .HasForeignKey<RemindExercise>(r => r.TkId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             // Cấu hình 1-1: TaiKhoan ↔ RemindDrinkWater
             modelBuilder.Entity<TaiKhoan>()
-                .HasOne(t => t.RemindDrinkWater)
-                .WithOne(r => r.TaiKhoan)
-                .HasForeignKey<RemindDrinkWater>(r => r.TkId)
+                .HasMany(up => up.RemindAlls)
+                .WithOne(rw => rw.TaiKhoan)
+                .HasForeignKey(rw => rw.TkId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Cấu hình 1-1: TaiKhoan ↔ RemindTakeMedicine
-            modelBuilder.Entity<TaiKhoan>()
-                .HasOne(t => t.RemindTakeMedicine)
-                .WithOne(r => r.TaiKhoan)
-                .HasForeignKey<RemindTakeMedicine>(r => r.TkId)
-                .OnDelete(DeleteBehavior.Cascade);
-            
             modelBuilder.Entity<QuestionLog>()
                 .HasOne(q => q.TaiKhoan)
                 .WithMany(t => t.QuestionLogs)
                 .HasForeignKey(q => q.TkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<AutoWarning>()
+                .HasOne(aw => aw.UserProfile)
+                .WithMany(up => up.AutoWarnings)
+                .HasForeignKey(aw => aw.UserProfileId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

@@ -95,7 +95,7 @@ namespace SeviceSmartHopitail.Services.Health
 
             var sleepTim = ConvertStringToDateTime(model.TimeSleep);
             var wakeTim = ConvertStringToDateTime(model.TimeWake);
-            var hoursSlee = CalculateSleepHours(sleepTim, wakeTim);
+            decimal hoursSlee = CalculateSleepHours(sleepTim, wakeTim);
 
             var rec = new SleepRecord
             {
@@ -109,6 +109,46 @@ namespace SeviceSmartHopitail.Services.Health
 
             _db.SleepRecords.Add(rec);
             await _db.SaveChangesAsync();
+
+            var pri = await _db.PriWarnings.FirstOrDefaultAsync(p => p.UserProfileId == model.UserProfileId);
+
+            decimal minSleep = pri?.MinSleep ?? 6m; // Giờ ngủ tối thiểu
+            decimal maxSleep = pri?.MaxSleep ?? 9m; // Giờ ngủ tối đa
+
+            string? message = null;
+            string icon = "";
+            string title = "Cảnh báo giấc ngủ";
+            string point = "Sleep";
+
+            if (hoursSlee > maxSleep)
+            {
+                message = $"Giấc ngủ hôm nay dài {hoursSlee}h vượt ngưỡng tối đa ({maxSleep}h).";
+                icon = "arrow-up";
+            }
+            else if (hoursSlee < minSleep)
+            {
+                message = $"Giấc ngủ hôm nay ngắn {hoursSlee}h thấp hơn ngưỡng tối thiểu ({minSleep}h).";
+                icon = "arrow-down";
+            }
+
+            if (message != null)
+            {
+                var warning = new AutoWarning
+                {
+                    UserProfileId = model.UserProfileId,
+                    point = point,
+                    icon = icon,
+                    title = title,
+                    node = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    mess = message,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+
+                _db.Add(warning);
+                await _db.SaveChangesAsync();
+            }
+
             return rec;
         }
 
@@ -192,11 +232,8 @@ namespace SeviceSmartHopitail.Services.Health
 
 
         // ===================== Biểu đồ giấc ngủ =====================
-        public async Task<object?> GetSleepChartDataAsync(int userProfileId)
+        public async Task<object?> GetSleepChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
         {
-            var now = DateTime.Now;
-            var oneMonthAgo = now.AddMonths(-1);
-
             var records = await _db.SleepRecords
                 .Where(r => r.UserProfileId == userProfileId &&
                             r.RecordedAt >= oneMonthAgo &&

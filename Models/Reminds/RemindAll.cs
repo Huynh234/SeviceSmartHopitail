@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SeviceSmartHopitail.Models.Reminds
 {
-    public class RemindExercise
+    public class RemindAll
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,9 +12,12 @@ namespace SeviceSmartHopitail.Models.Reminds
 
         [ForeignKey(nameof(TaiKhoan))]
         public int TkId { get; set; }
+        public string? Content { get; set; }
         public decimal? TimeRemind { get; set; }
-        public string? Title { get; set; }            // Tiêu đề nhắc nhở
-        public DateTime? LastSent { get; set; }       // Lần gửi gần nhất
+        public string? Title { get; set; }
+        public int loop { get; set; } = 0;
+        public string? DayOfWkeek { get; set; }
+        public DateTime? LastSent { get; set; }
 
         public TaiKhoan TaiKhoan { get; set; } = null!;
     }

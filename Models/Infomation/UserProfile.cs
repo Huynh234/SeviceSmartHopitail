@@ -38,5 +38,6 @@ namespace SeviceSmartHopitail.Models.Infomation
         public ICollection<BloodPressureRecord>? HealthHeartRates { get; set; } // Nhịp tim
         public ICollection<BloodSugarRecord>? HealthBloodSugars { get; set; } // Đường huyết
         public ICollection<HeartRateRecord>? HealthBloodPressures { get; set; } // Huyết áp
+        public ICollection<AutoWarning>? AutoWarnings { get; set; } 
     }
 }

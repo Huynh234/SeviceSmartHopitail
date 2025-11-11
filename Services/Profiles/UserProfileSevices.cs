@@ -72,6 +72,12 @@ namespace SeviceSmartHopitail.Services.Profiles
         // Thêm mới hồ sơ
         public async Task<UserProfile> CreateAsync(CreateUserProfile pf, MemoryStream avatarStream)
         {
+            var existing = await _db.UserProfiles.FirstOrDefaultAsync(x => x.TaiKhoanId == pf.TaiKhoanId);
+            if (existing != null)
+            {
+                return null;
+                throw new InvalidOperationException("Hồ sơ cho tài khoản này đã tồn tại.");
+            }
             var profile = new UserProfile
             {
                 TaiKhoanId = pf.TaiKhoanId,

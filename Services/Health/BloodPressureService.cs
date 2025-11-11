@@ -74,6 +74,62 @@ namespace SeviceSmartHopitail.Services.Health
 
             _db.BloodPressureRecords.Add(rec);
             await _db.SaveChangesAsync();
+
+            var pri = await _db.PriWarnings
+        .FirstOrDefaultAsync(p => p.UserProfileId == model.UserProfileId);
+
+            // --- Nếu không có ngưỡng cá nhân thì dùng mặc định ---
+            int minSys = pri?.MinSystolic ?? 90;    // huyết áp tâm thu tối thiểu
+            int maxSys = pri?.MaxSystolic ?? 140;   // huyết áp tâm thu tối đa
+            int minDia = pri?.MinDiastolic ?? 60;   // huyết áp tâm trương tối thiểu
+            int maxDia = pri?.MaxDiastolic ?? 90;   // huyết áp tâm trương tối đa
+
+            string? message = null;
+            string icon = "";
+            string title = "Cảnh báo huyết áp";
+            string point = "BloodPressure";
+
+            // Kiểm tra vượt ngưỡng
+            if (model.Systolic > maxSys)
+            {
+                message = $"Huyết áp tâm thu {model.Systolic} mmHg vượt ngưỡng tối đa ({maxSys} mmHg).";
+                icon = "arrow-up";
+            }
+            else if (model.Systolic < minSys)
+            {
+                message = $"Huyết áp tâm thu {model.Systolic} mmHg thấp hơn ngưỡng tối thiểu ({minSys} mmHg).";
+                icon = "arrow-down";
+            }
+            else if (model.Diastolic > maxDia)
+            {
+                message = $"Huyết áp tâm trương {model.Diastolic} mmHg vượt ngưỡng tối đa ({maxDia} mmHg).";
+                icon = "arrow-up";
+            }
+            else if (model.Diastolic < minDia)
+            {
+                message = $"Huyết áp tâm trương {model.Diastolic} mmHg thấp hơn ngưỡng tối thiểu ({minDia} mmHg).";
+                icon = "arrow-down";
+            }
+
+            // Nếu có cảnh báo thì lưu vào bảng AutoWarning
+            if (message != null)
+            {
+                var warning = new AutoWarning
+                {
+                    UserProfileId = model.UserProfileId,
+                    point = point,
+                    icon = icon,
+                    title = title,
+                    node = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    mess = message,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+
+                _db.Add(warning);
+                await _db.SaveChangesAsync();
+            }
+
             return rec;
         }
 
@@ -114,10 +170,8 @@ namespace SeviceSmartHopitail.Services.Health
         }
 
         // ===================== Biểu đồ huyết áp =====================
-        public async Task<object?> GetBloodPressureChartDataAsync(int userProfileId)
+        public async Task<object?> GetBloodPressureChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
         {
-            var now = DateTime.Now;
-            var oneMonthAgo = now.AddMonths(-1);
 
             var records = await _db.BloodPressureRecords
                 .Where(r => r.UserProfileId == userProfileId &&
@@ -126,7 +180,7 @@ namespace SeviceSmartHopitail.Services.Health
                 .OrderBy(r => r.RecordedAt)
                 .ToListAsync();
 
-            if (records.Count < 10) return null;
+            if (records.Count < 5) return null;
 
             var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
             var systolicData = records.Select(r => r.Systolic).ToList();

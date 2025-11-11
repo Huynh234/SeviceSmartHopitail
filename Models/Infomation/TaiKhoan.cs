@@ -31,10 +31,7 @@ namespace SeviceSmartHopitail.Models.Infomation
         public bool LockStatus { get; set; } = false;
 
         public UserProfile? UserProfile { get; set; }
-        public RemindersSleep? RemindersSleep { get; set; }
-        public RemindExercise? RemindExercise { get; set; }
-        public RemindDrinkWater? RemindDrinkWater { get; set; }
-        public RemindTakeMedicine? RemindTakeMedicine { get; set; }
+        public ICollection<RemindAll>? RemindAlls { get; set; }
         public ICollection<QuestionLog>? QuestionLogs { get; set; }
     }
 }

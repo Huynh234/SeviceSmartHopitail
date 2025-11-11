@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
-using SeviceSmartHopitail.Services.Profiles;
-using SeviceSmartHopitail.Schemas.HR;
 using SeviceSmartHopitail.Models.Health;
+using SeviceSmartHopitail.Schemas.HR;
+using SeviceSmartHopitail.Services.Profiles;
 namespace SeviceSmartHopitail.Services.Health
 {
     public class HeartRateService
@@ -78,6 +78,48 @@ namespace SeviceSmartHopitail.Services.Health
 
             _db.HeartRateRecords.Add(record);
             await _db.SaveChangesAsync();
+
+            var pri = await _db.PriWarnings
+        .FirstOrDefaultAsync(p => p.UserProfileId == model.UserProfileId);
+
+            // --- Nếu không có ngưỡng cá nhân thì dùng mặc định ---
+            int minHR = pri?.MinHeartRate ?? 60;   // nhịp tim thấp nhất bình thường
+            int maxHR = pri?.MaxHeartRate ?? 100;  // nhịp tim cao nhất bình thường
+
+            string? message = null;
+            string icon = "";
+            string title = "Cảnh báo nhịp tim";
+            string point = "HeartRate";
+
+            if (model.HeartRate > maxHR)
+            {
+                message = $"Nhịp tim {model.HeartRate} bpm vượt ngưỡng tối đa ({maxHR} bpm).";
+                icon = "arrow-up";
+            }
+            else if (model.HeartRate < minHR)
+            {
+                message = $"Nhịp tim {model.HeartRate} bpm thấp hơn ngưỡng tối thiểu ({minHR} bpm).";
+                icon = "arrow-down";
+            }
+
+            if (message != null)
+            {
+                var warning = new AutoWarning
+                {
+                    UserProfileId = model.UserProfileId,
+                    point = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    icon = icon,
+                    title = title,
+                    node = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    mess = message,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+
+                _db.Add(warning);
+                await _db.SaveChangesAsync();
+            }
+
             return record;
         }
 
@@ -111,11 +153,8 @@ namespace SeviceSmartHopitail.Services.Health
             else return "Nhịp tim giữ nguyên";
         }
         // ===================== Biểu đồ nhịp tim =====================
-        public async Task<object?> GetHeartRateChartDataAsync(int userProfileId)
+        public async Task<object?> GetHeartRateChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
         {
-            var now = DateTime.Now;
-            var oneMonthAgo = now.AddMonths(-1);
-
             var records = await _db.HeartRateRecords
                 .Where(r => r.UserProfileId == userProfileId &&
                             r.RecordedAt >= oneMonthAgo &&
@@ -202,7 +241,7 @@ namespace SeviceSmartHopitail.Services.Health
             var pri = await _db.PriWarnings.FirstOrDefaultAsync(p => p.UserProfileId == userProfileId);
 
             // Đánh giá theo cảnh báo
-            string avgAlert = _alertService.GetHeartRateAlert((decimal) avg, pri);
+            string avgAlert = _alertService.GetHeartRateAlert((decimal)avg, pri);
             string currentAlert = _alertService.GetHeartRateAlert(latest.HeartRate, pri);
 
             // Tạo đánh giá tổng quan

@@ -37,10 +37,9 @@ builder.Services.AddScoped<MangementAccountServices>();
 builder.Services.AddScoped<QaServices>();
 builder.Services.AddScoped<WarningService>();
 builder.Services.AddScoped<HealthAlertService>();
-builder.Services.AddScoped<RmWaterSevice>();
-builder.Services.AddScoped<RmSleepService>();
-builder.Services.AddScoped<RmMedicineService>();
-builder.Services.AddScoped<RmExerciseService>();
+builder.Services.AddScoped<RmAllrSevice>();
+builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<WarningService>();
 
 // Gemini SDK client wrapper: nên để Singleton nếu SDK sử dụng HttpClient/kết nối bên trong
 builder.Services.AddSingleton<IGeminiClient, GeminiClientWrapper>();
@@ -62,17 +61,10 @@ builder.Services.AddCors(options =>
 
 // --- Scheduler gửi email tự động
 builder.Services.AddHostedService<ScheduledEmailService>();
-
-// --- Scheduler nhắc nhở giấc ngủ
-builder.Services.AddHostedService<ReminderSleepService>();
 // --- Scheduler nhắc nhở uống nước
-builder.Services.AddHostedService<RemindDrinkWaterService>();
-// --- Scheduler nhắc nhở uống thuốc
-builder.Services.AddHostedService<RemindTakeMedicineService>();
-// --- Scheduler nhắc nhở tập thể dục
-builder.Services.AddHostedService<RemindExerciseService>();
+builder.Services.AddHostedService<RemindALLService>();
 // --- Đăng ký PdfExtractor (nếu muốn gọi từ DI, không bắt buộc)
-builder.Services.AddTransient<PdfExtractor>();
+//builder.Services.AddTransient<PdfExtractor>();
 
 // --- Cấu hình Controllers + Swagger
 builder.Services.AddControllers();

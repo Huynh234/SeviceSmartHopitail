@@ -5,82 +5,20 @@ using SeviceSmartHopitail.Services.Remind;
 
 namespace SeviceSmartHopitail.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class RemindController : ControllerBase
     {
-        private readonly RmMedicineService _medicineService;
-        private readonly RmExerciseService _exerciseService;
-        private readonly RmSleepService _sleepService;
-        private readonly RmWaterSevice _drinkWaterService;
+        private readonly RmAllrSevice _drinkWaterService;
 
-        public RemindController(
-            RmMedicineService medicineService,
-            RmExerciseService exerciseService,
-            RmSleepService sleepService,
-            RmWaterSevice drinkWaterService)
+        public RemindController(RmAllrSevice drinkWaterService)
         {
-            _medicineService = medicineService;
-            _exerciseService = exerciseService;
-            _sleepService = sleepService;
             _drinkWaterService = drinkWaterService;
-        }
-
-        // ======================= UỐNG THUỐC ===========================
-        [Authorize(Roles = "user")]
-        [HttpPost("take-medicine")]
-        public async Task<IActionResult> CreateTakeMedicine([FromBody] CrAllRemind model)
-        {
-            if (model == null) return BadRequest("Invalid data");
-            var result = await _medicineService.CreateAsync(model);
-            return Ok(result);
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpDelete("take-medicine/{id}")]
-        public async Task<IActionResult> DeleteTakeMedicine(int id)
-        {
-            var success = await _medicineService.DeleteAsync(id);
-            return success ? Ok("Deleted successfully") : NotFound("Remind not found");
-        }
-
-        // ======================= TẬP THỂ DỤC ===========================
-        [Authorize(Roles = "user")]
-        [HttpPost("exercise")]
-        public async Task<IActionResult> CreateExercise([FromBody] CrAllRemind model)
-        {
-            if (model == null) return BadRequest("Invalid data");
-            var result = await _exerciseService.CreateAsync(model);
-            return Ok(result);
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpDelete("exercise/{id}")]
-        public async Task<IActionResult> DeleteExercise(int id)
-        {
-            var success = await _exerciseService.DeleteAsync(id);
-            return success ? Ok("Deleted successfully") : NotFound("Remind not found");
-        }
-
-        // ======================= NGỦ NGHỈ ===========================
-        [Authorize(Roles = "user")]
-        [HttpPost("sleep")]
-        public async Task<IActionResult> CreateSleep([FromBody] CrAllRemind model)
-        {
-            if (model == null) return BadRequest("Invalid data");
-            var result = await _sleepService.CreateAsync(model);
-            return Ok(result);
-        }
-
-        [Authorize(Roles = "user")]
-        [HttpDelete("sleep/{id}")]
-        public async Task<IActionResult> DeleteSleep(int id)
-        {
-            var success = await _sleepService.DeleteAsync(id);
-            return success ? Ok("Deleted successfully") : NotFound("Remind not found");
         }
 
         // ======================= UỐNG NƯỚC ===========================
         [Authorize(Roles = "user")]
-        [HttpPost("drink-water")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateDrinkWater([FromBody] CrAllRemind model)
         {
             if (model == null) return BadRequest("Invalid data");
@@ -89,7 +27,7 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         [Authorize(Roles = "user")]
-        [HttpDelete("drink-water/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteDrinkWater(int id)
         {
             var success = await _drinkWaterService.DeleteAsync(id);
@@ -100,33 +38,15 @@ namespace SeviceSmartHopitail.Controllers
         [HttpGet("all/{tkId}")]
         public async Task<IActionResult> DeleteAllReminds(int tkId)
         {
-            var medicineRemind = await _medicineService.GetByTkIdAsync(tkId);
-            if (medicineRemind != null)
-            {
-                return NotFound("Remind not found");
-            }
-            var exerciseRemind = await _exerciseService.GetByTkIdAsync(tkId);
-            if (exerciseRemind != null)
-            {
-                return NotFound("Remind not found");
-            }
-            var sleepRemind = await _sleepService.GetByTkIdAsync(tkId);
-            if (sleepRemind != null)
-            {
-                return NotFound("Remind not found");
-            }
             var drinkWaterRemind = await _drinkWaterService.GetByTkIdAsync(tkId);
-            if (drinkWaterRemind != null)
+            if (drinkWaterRemind == null)
             {
                 return NotFound("Remind not found");
             }
             return Ok(new
             {
-                water = drinkWaterRemind != null,
-                sleep = sleepRemind != null,
-                exercise = exerciseRemind != null,
-                medicine = medicineRemind != null
-            });
+                water = drinkWaterRemind
+        });
         }
 
     }

@@ -101,15 +101,15 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         // ===================== Biểu đồ giấc ngủ =====================
-        [Authorize(Roles = "user")]
-        [HttpGet("chart/{userProfileId}")]
-        public async Task<IActionResult> GetChartData(int userProfileId)
-        {
-            var data = await _sleepService.GetSleepChartDataAsync(userProfileId);
-            if (data == null)
-                return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
-            return Ok(data);
-        }
+        //[Authorize(Roles = "user")]
+        //[HttpGet("chart/{userProfileId}")]
+        //public async Task<IActionResult> GetChartData(int userProfileId)
+        //{
+        //    var data = await _sleepService.GetSleepChartDataAsync(userProfileId);
+        //    if (data == null)
+        //        return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
+        //    return Ok(data);
+        //}
 
         // ===================== Trung bình giấc ngủ tháng =====================
         [Authorize(Roles = "user")]

@@ -96,14 +96,14 @@ namespace SeviceSmartHopitail.Controllers
 
 
         /// Lấy dữ liệu biểu đồ huyết áp trong 1 tháng gần nhất
-        [Authorize(Roles = "user")]
-        [HttpGet("chart/{userProfileId}")]
-        public async Task<IActionResult> GetChartData(int userProfileId)
-        {
-            var data = await _service.GetBloodPressureChartDataAsync(userProfileId);
-            if (data == null) return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
-            return Ok(data);
-        }
+        //[Authorize(Roles = "user")]
+        //[HttpGet("chart/{userProfileId}")]
+        //public async Task<IActionResult> GetChartData(int userProfileId)
+        //{
+        //    var data = await _service.GetBloodPressureChartDataAsync(userProfileId);
+        //    if (data == null) return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
+        //    return Ok(data);
+        //}
         [Authorize(Roles = "user")]
         [HttpGet("average/{userProfileId}")]
         public async Task<IActionResult> GetAverage(int userProfileId, [FromQuery] int days = 30)

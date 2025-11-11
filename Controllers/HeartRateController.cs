@@ -102,16 +102,16 @@ namespace SeviceSmartHopitail.Controllers
         }
 
         /// Lấy dữ liệu biểu đồ nhịp tim trong 1 tháng gần nhất
-        [Authorize(Roles = "user")]
-        [HttpGet("chart/{userProfileId}")]
-        public async Task<IActionResult> GetChartData(int userProfileId)
-        {
-            var data = await _service.GetHeartRateChartDataAsync(userProfileId);
-            if (data == null)
-                return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
+        //[Authorize(Roles = "user")]
+        //[HttpGet("chart/{userProfileId}")]
+        //public async Task<IActionResult> GetChartData(int userProfileId)
+        //{
+        //    var data = await _service.GetHeartRateChartDataAsync(userProfileId);
+        //    if (data == null)
+        //        return NotFound(new { message = "Không đủ dữ liệu để vẽ biểu đồ." });
 
-            return Ok(data);
-        }
+        //    return Ok(data);
+        //}
 
         // ===================== API: Lấy trung bình nhịp tim =====================
         [Authorize(Roles = "user")]

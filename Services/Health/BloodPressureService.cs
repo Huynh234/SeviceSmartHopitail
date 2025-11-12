@@ -170,7 +170,7 @@ namespace SeviceSmartHopitail.Services.Health
         }
 
         // ===================== Biểu đồ huyết áp =====================
-        public async Task<object?> GetBloodPressureChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
+        public async Task<object?> GetBloodPressureChartDataAsync(int userProfileId, DateTime oneMonthAgo, DateTime now)
         {
 
             var records = await _db.BloodPressureRecords

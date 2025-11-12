@@ -232,8 +232,7 @@ namespace SeviceSmartHopitail.Services.Health
 
 
         // ===================== Biểu đồ giấc ngủ =====================
-        public async Task<object?> GetSleepChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
-        {
+        public async Task<object?> GetSleepChartDataAsync(int userProfileId, DateTime oneMonthAgo, DateTime now){
             var records = await _db.SleepRecords
                 .Where(r => r.UserProfileId == userProfileId &&
                             r.RecordedAt >= oneMonthAgo &&
@@ -241,7 +240,7 @@ namespace SeviceSmartHopitail.Services.Health
                 .OrderBy(r => r.RecordedAt)
                 .ToListAsync();
 
-            if (records.Count < 10) return null;
+            if (records.Count < 5) return null;
 
             var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
             var sleepData = records.Select(r => r.HoursSleep).ToList();

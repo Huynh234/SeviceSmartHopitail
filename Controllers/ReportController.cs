@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Services.Health;
+using UglyToad.PdfPig.Graphics.Operations.PathPainting;
 
 namespace SeviceSmartHopitail.Controllers
 {
@@ -31,7 +32,17 @@ namespace SeviceSmartHopitail.Controllers
             {
                 return NotFound(new { message = "Không thể tạo báo cáo cho người dùng này." });
             }
-            return Ok(report);
+            object tot = report.Last();
+
+            // Lấy phần còn lại
+            List<object> da = report.Take(report.Count - 1).ToList();
+
+            // Gói vào object Result
+            return Ok(new
+            {
+                Data = da,
+                Total = tot
+            });
         }
 
         [Authorize(Roles = "user")]
@@ -47,7 +58,13 @@ namespace SeviceSmartHopitail.Controllers
         [HttpGet("chart/{userProfileId}")]
         public async Task<IActionResult> chartAll(int userProfileId, [FromQuery] string start, [FromQuery] string end = "")
         {
-            var enddate = _rs.ConvertSTD(end);
+            var enddate = DateTime.Now;
+
+            if (end != "")
+            {
+                enddate = _rs.ConvertSTD(end);
+            }
+
             var startdate = _rs.ConvertSTD(start);
 
             var bp = await _bp.GetBloodPressureChartDataAsync(userProfileId, startdate, enddate);
@@ -58,7 +75,7 @@ namespace SeviceSmartHopitail.Controllers
 
             var ss = await _ss.GetSleepChartDataAsync(userProfileId, startdate, enddate);
 
-            return Ok(new { BloodPressure = bp, BloodSugar = bs, HeartRate = hr, Sleep = ss });
+            return Ok(new { BloodPressure = bp, BloodSugar = bs, HeartRate = hr, Sleep = ss , sf = $"Start Date: {startdate}, End Date: {enddate}" });
         }
 
     }

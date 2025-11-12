@@ -153,7 +153,7 @@ namespace SeviceSmartHopitail.Services.Health
             else return "Nhịp tim giữ nguyên";
         }
         // ===================== Biểu đồ nhịp tim =====================
-        public async Task<object?> GetHeartRateChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
+        public async Task<object?> GetHeartRateChartDataAsync(int userProfileId, DateTime oneMonthAgo, DateTime now)
         {
             var records = await _db.HeartRateRecords
                 .Where(r => r.UserProfileId == userProfileId &&
@@ -162,7 +162,7 @@ namespace SeviceSmartHopitail.Services.Health
                 .OrderBy(r => r.RecordedAt)
                 .ToListAsync();
 
-            if (records.Count < 10) return null;
+            if (records.Count < 5) return null;
 
             var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
             var heartRateData = records.Select(r => r.HeartRate).ToList();

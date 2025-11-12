@@ -141,7 +141,7 @@ namespace SeviceSmartHopitail.Services.Health
             else return "Đường huyết giữ nguyên";
         }
         // ===================== Biểu đồ đường huyết =====================
-        public async Task<object?> GetBloodSugarChartDataAsync(int userProfileId, DateTime now, DateTime oneMonthAgo)
+        public async Task<object?> GetBloodSugarChartDataAsync(int userProfileId, DateTime oneMonthAgo, DateTime now)
         {
             var records = await _db.BloodSugarRecords
                 .Where(r => r.UserProfileId == userProfileId &&
@@ -150,7 +150,7 @@ namespace SeviceSmartHopitail.Services.Health
                 .OrderBy(r => r.RecordedAt)
                 .ToListAsync();
 
-            if (records.Count < 10) return null;
+            if (records.Count < 5) return null;
 
             var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
             var sugarData = records.Select(r => r.BloodSugar).ToList();

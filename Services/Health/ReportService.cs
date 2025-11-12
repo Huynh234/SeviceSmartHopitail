@@ -14,7 +14,26 @@ namespace SeviceSmartHopitail.Services.Health
 
         public DateTime ConvertSTD(string day)
         {
-            return DateTime.Parse(day, null, System.Globalization.DateTimeStyles.RoundtripKind);
+            if (string.IsNullOrWhiteSpace(day) || day == "\"\"" || day.Equals("null", StringComparison.OrdinalIgnoreCase))
+            {
+                // Nếu không có ngày thì trả về hiện tại
+                return DateTime.Now;
+            }
+
+            // Nếu day là số 7 hoặc 30 → cộng thêm số ngày đó
+            if (day == "7" || day == "30")
+            {
+                return DateTime.Now.AddDays(-(int.Parse(day)));
+            }
+
+            // Nếu không, thử parse theo định dạng ISO hoặc tự động
+            if (DateTime.TryParse(day, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsed))
+            {
+                return parsed;
+            }
+
+            // Nếu không parse được, fallback về hiện tại
+            return DateTime.Now;
         }
 
         public async Task<List<object>> DataDetail(int proId, string start, string end = "")
@@ -83,10 +102,10 @@ namespace SeviceSmartHopitail.Services.Health
             var result = dailyData.Select(x => new
             {
                 x.Date,
-                BloodPressure = x.AvgSystolic.HasValue ? $"{x.AvgSystolic:0}/{x.AvgDiastolic:0} mmHg" : "Không có dữ liệu",
-                HeartRate = x.AvgHeartRate.HasValue ? $"{x.AvgHeartRate:0} bpm" : "Không có dữ liệu",
-                BloodSugar = x.AvgBloodSugar.HasValue ? $"{x.AvgBloodSugar:0.##} mg/dL" : "Không có dữ liệu",
-                Sleep = x.AvgSleep.HasValue ? $"{x.AvgSleep:0.##} giờ" : "Không có dữ liệu",
+                BloodPressure = x.AvgSystolic.HasValue ? $"{x.AvgSystolic:0}/{x.AvgDiastolic:0} mmHg" : "",
+                HeartRate = x.AvgHeartRate.HasValue ? $"{x.AvgHeartRate:0} bpm" : "",
+                BloodSugar = x.AvgBloodSugar.HasValue ? $"{x.AvgBloodSugar:0.##} mg/dL" : "",
+                Sleep = x.AvgSleep.HasValue ? $"{x.AvgSleep:0.##} giờ" : "",
                 x.Note
             }).Cast<object>().ToList();
 

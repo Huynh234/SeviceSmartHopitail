@@ -2,6 +2,7 @@
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models.Infomation;
 using SeviceSmartHopitail.Schemas.PF;
+using System.Net;
 
 namespace SeviceSmartHopitail.Services.Profiles
 {
@@ -81,7 +82,7 @@ namespace SeviceSmartHopitail.Services.Profiles
             var profile = new UserProfile
             {
                 TaiKhoanId = pf.TaiKhoanId,
-                FullName = pf.FullName,
+                FullName = WebUtility.HtmlEncode(pf.FullName),
                 Age = TinhTuoi(pf.Birth),
                 Brith = pf.Birth,
                 Gender = pf.Gender,
@@ -105,7 +106,7 @@ namespace SeviceSmartHopitail.Services.Profiles
 
             // cập nhật từng field
             existing.Age = TinhTuoi(profile.Birth);
-            existing.FullName = profile.FullName;
+            existing.FullName = WebUtility.HtmlEncode(profile.FullName);
             existing.Brith = profile.Birth;
             existing.Gender = profile.Gender;
             existing.PhoneNumber = profile.PhoneNumber;

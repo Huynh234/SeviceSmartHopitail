@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Services.Health;
 using UglyToad.PdfPig.Graphics.Operations.PathPainting;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SeviceSmartHopitail.Controllers
 {
@@ -78,6 +79,76 @@ namespace SeviceSmartHopitail.Controllers
             return Ok(new { BloodPressure = bp, BloodSugar = bs, HeartRate = hr, Sleep = ss , sf = $"Start Date: {startdate}, End Date: {enddate}" });
         }
 
+        [Authorize(Roles = "user")]
+        [HttpGet("export-chart-bp/{userProfileId}")]
+        public async Task<IActionResult> Exportbp(int userProfileId, [FromQuery] string start, [FromQuery] string end = "")
+        {
+            var enddate = DateTime.Now;
+
+            if (end != "")
+            {
+                enddate = _rs.ConvertSTD(end);
+            }
+
+            var startdate = _rs.ConvertSTD(start);
+
+            var bp = await _bp.GetBloodPressureChartDataAsync(userProfileId, startdate, enddate);
+
+            var pdfBytes = _rs.DrawChart(bp, "Huyết áp");
+            return File(pdfBytes, "application/png", "BloodPressureChart.png");
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpGet("export-chart-bs/{userProfileId}")]
+        public async Task<IActionResult> Exportbs(int userProfileId, [FromQuery] string start, [FromQuery] string end = "")
+        {
+            var enddate = DateTime.Now;
+
+            if (end != "")
+            {
+                enddate = _rs.ConvertSTD(end);
+            }
+
+            var startdate = _rs.ConvertSTD(start);
+
+            var bs = await _bs.GetBloodSugarChartDataAsync(userProfileId, startdate, enddate);
+            var pdfBytes = _rs.DrawChart(bs, "Đường huyết");
+            return File(pdfBytes, "application/png", "BloodSugarChart.png");
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpGet("export-chart-hr/{userProfileId}")]
+        public async Task<IActionResult> Exporthr(int userProfileId, [FromQuery] string start, [FromQuery] string end = "")
+        {
+            var enddate = DateTime.Now;
+
+            if (end != "")
+            {
+                enddate = _rs.ConvertSTD(end);
+            }
+
+            var startdate = _rs.ConvertSTD(start);
+            var hr = await _hr.GetHeartRateChartDataAsync(userProfileId, startdate, enddate);
+            var pdfBytes = _rs.DrawChart(hr, "Nhịp tim");
+            return File(pdfBytes, "application/png", "HeartRateChart.png");
+        }
+
+        [Authorize(Roles = "user")]
+        [HttpGet("export-chart-ss/{userProfileId}")]
+        public async Task<IActionResult> Exportss(int userProfileId, [FromQuery] string start, [FromQuery] string end = "")
+        {
+            var enddate = DateTime.Now;
+
+            if (end != "")
+            {
+                enddate = _rs.ConvertSTD(end);
+            }
+
+            var startdate = _rs.ConvertSTD(start);
+            var ss = await _ss.GetSleepChartDataAsync(userProfileId, startdate, enddate);
+            var pdfBytes = _rs.DrawChart(ss, "Giờ ngủ");
+            return File(pdfBytes, "application/png", "SleepChart.png");
+        }
     }
 }
 

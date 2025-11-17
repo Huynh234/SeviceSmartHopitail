@@ -29,7 +29,7 @@ namespace SeviceSmartHopitail.Services
         public async Task<List<TaiKhoan>> GetAllAsync()
         {
 
-            return await _db.TaiKhoans.ToListAsync();
+            return await _db.TaiKhoans.OrderByDescending(x => x.CreatAt).ToListAsync();
         }
 
         // Tìm tài khoản theo Id

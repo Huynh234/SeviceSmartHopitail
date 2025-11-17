@@ -1,4 +1,5 @@
-﻿using System.Reflection.Metadata.Ecma335;
+﻿using System.Net;
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.EntityFrameworkCore;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Models.Infomation;
@@ -22,6 +23,7 @@ namespace SeviceSmartHopitail.Services
 
         public (int, string?) Register(string username, string email, string password)
         {
+            string safeUsername = WebUtility.HtmlEncode(username);
             if (_db.TaiKhoans.Any(x => x.Email == email))
             {
                 var tk = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
@@ -29,7 +31,7 @@ namespace SeviceSmartHopitail.Services
                 {
                     string otp2 = _mailService.GenerateOTP();
                     tk.OtpExpireAt = DateTime.Now.AddMinutes(5);
-                    tk.UserName = username; // cập nhật tên nếu muốn
+                    tk.UserName = safeUsername; // cập nhật tên nếu muốn
                     tk.PasswordHash = _mailService.Hash(password);
                     tk.OtpHash = _mailService.Hash(otp2);
                     tk.LockStatus = true;
@@ -40,7 +42,7 @@ namespace SeviceSmartHopitail.Services
                 
                 if(tk.Status)
                 {
-                    return (2, "Tài khoản đã tồn tại");
+                    return (2, "Email đã tồn tại");
                 }
 
                 if (!tk.LockStatus){
@@ -54,7 +56,7 @@ namespace SeviceSmartHopitail.Services
 
             var user = new TaiKhoan
             {
-                UserName = username,
+                UserName = safeUsername,
                 Email = email,
                 PasswordHash = _mailService.Hash(password),
                 OtpHash = otpHash,

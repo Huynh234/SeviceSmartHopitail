@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SeviceSmartHopitail.Datas;
 using QuestPDF.Fluent;
+using SeviceSmartHopitail.Datas;
+using ScottPlot;
+using ScottPlot.TickGenerators;
+using System.Drawing;
+using Color = System.Drawing.Color;
+using SkiaSharp;
 
 namespace SeviceSmartHopitail.Services.Health
 {
@@ -52,7 +57,7 @@ namespace SeviceSmartHopitail.Services.Health
             }
 
             var bp = await _db.BloodPressureRecords
-                .Where(x =>x.UserProfileId == proId && x.RecordedAt >= startDate && x.RecordedAt <= endDate)
+                .Where(x => x.UserProfileId == proId && x.RecordedAt >= startDate && x.RecordedAt <= endDate)
                 .ToListAsync();
             var hr = await _db.HeartRateRecords
                 .Where(x => x.UserProfileId == proId && x.RecordedAt >= startDate && x.RecordedAt <= endDate)
@@ -98,7 +103,7 @@ namespace SeviceSmartHopitail.Services.Health
                 Note = "",
             };
             //string = Coment = "Trong 7 ngày qua, các chỉ số sức khỏe của bạn nhìn chung đang ổn định. Huyết áp trung bình" +da+" mmHg, nhịp tim 72 BPM, đường huyết 95 mg/dL và giấc ngủ trung bình 7.6 giờ/đêm. Tiếp tục duy trì lối sống lành mạnh và theo dõi thường xuyên."
-            
+
             var result = dailyData.Select(x => new
             {
                 x.Date,
@@ -137,7 +142,7 @@ namespace SeviceSmartHopitail.Services.Health
                     page.Content()
                         .Table(table =>
                         {
-                            // Header
+                            // Column definition
                             table.ColumnsDefinition(columns =>
                             {
                                 columns.ConstantColumn(100);
@@ -148,25 +153,26 @@ namespace SeviceSmartHopitail.Services.Health
                                 columns.RelativeColumn();
                             });
 
+                            // Header
                             table.Header(header =>
                             {
-                                header.Cell().Text("Ngày").Bold();
-                                header.Cell().Text("Huyết áp").Bold();
-                                header.Cell().Text("Nhịp tim").Bold();
-                                header.Cell().Text("Đường huyết").Bold();
-                                header.Cell().Text("Giấc ngủ").Bold();
-                                header.Cell().Text("Ghi chú").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Ngày").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Huyết áp").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Nhịp tim").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Đường huyết").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Giấc ngủ").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Ghi chú").Bold();
                             });
 
                             // Body
-                            foreach (var item in data.Cast<dynamic>()) // Explicitly cast to dynamic
+                            foreach (var item in data.Cast<dynamic>())
                             {
-                                table.Cell().Text((string)item.Date); // Explicitly cast dynamic properties
-                                table.Cell().Text((string)item.BloodPressure);
-                                table.Cell().Text((string)item.HeartRate);
-                                table.Cell().Text((string)item.BloodSugar);
-                                table.Cell().Text((string)item.Sleep);
-                                table.Cell().Text((string)(item.Note ?? ""));
+                                table.Cell().Border(1).Padding(5).Text((string)item.Date);
+                                table.Cell().Border(1).Padding(5).Text((string)item.BloodPressure ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)item.HeartRate ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)item.BloodSugar ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)item.Sleep ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)(item.Note ?? "---"));
                             }
                         });
 
@@ -185,7 +191,81 @@ namespace SeviceSmartHopitail.Services.Health
             return document.GeneratePdf();
         }
 
-        //public async
+        public byte[] DrawChart(object chartData, string name)
+        {
+            if (chartData == null)
+                throw new Exception("ChartData is null");
+
+            var plt = new Plot();
+
+            var labels = (chartData.GetType().GetProperty("labels")?.GetValue(chartData) as IEnumerable<string>)?.ToList()
+                         ?? throw new Exception("labels not found");
+
+            var datasets = (chartData.GetType().GetProperty("datasets")?.GetValue(chartData) as IEnumerable<object>)
+                           ?? throw new Exception("datasets not found");
+
+            double[] xs = Enumerable.Range(0, labels.Count).Select(i => (double)i).ToArray();
+            bool hasSecondary = false;
+
+            foreach (var ds in datasets)
+            {
+                var dsType = ds.GetType();
+                string label = dsType.GetProperty("label")?.GetValue(ds)?.ToString() ?? "";
+                string hex = dsType.GetProperty("borderColor")?.GetValue(ds)?.ToString() ?? "#000000";
+                var color = ScottPlot.Color.FromHex(hex);
+                string yAxisID = dsType.GetProperty("yAxisID")?.GetValue(ds)?.ToString() ?? "y";
+
+                var raw = dsType.GetProperty("data")?.GetValue(ds);
+                double[] ys;
+                if (raw is IEnumerable<object> objList)
+                {
+                    // data dạng List<object> (rất phổ biến khi deserialize)
+                    ys = objList.Select(v => Convert.ToDouble(v)).ToArray();
+                }
+                else
+                {
+                    ys = (raw as IEnumerable<int>)?.Select(Convert.ToDouble).ToArray()
+                       ?? (raw as IEnumerable<long>)?.Select(Convert.ToDouble).ToArray()
+                       ?? (raw as IEnumerable<float>)?.Select(Convert.ToDouble).ToArray()
+                       ?? (raw as IEnumerable<double>)?.ToArray()
+                       ?? (raw as IEnumerable<decimal>)?.Select(Convert.ToDouble).ToArray()   // <-- THÊM DÒNG NÀY
+                       ?? throw new Exception("Invalid dataset.data: unsupported type " + raw?.GetType());
+                }
+
+                bool useSecondary = yAxisID == "y1";
+                if (useSecondary) hasSecondary = true;
+
+                var sc = plt.Add.Scatter(xs, ys);
+                sc.Label = label;
+                sc.Color = color;
+                sc.MarkerSize = 5;
+
+                if (useSecondary)
+                    sc.Axes.YAxis = plt.Axes.Right;
+            }
+
+            // Set tick for X-axis with category labels
+            plt.Axes.Bottom.SetTicks(xs, labels.ToArray());
+
+            // Rotate X-axis labels
+            plt.Axes.Bottom.TickLabelStyle.Rotation = -45;
+
+            // Set axis titles
+            plt.Axes.Left.Label.Text = "Primary Y";
+            if (hasSecondary)
+                plt.Axes.Right.Label.Text = "Secondary Y";
+            plt.Axes.Bottom.Label.Text = "Dates";
+
+            // Set plot title
+            plt.Title(name);
+
+            // Show legend
+            plt.Add.Legend();
+            // Render to bitmap in memory
+            var img = plt.GetImage(1200, 600);
+            return img.GetImageBytes(ScottPlot.ImageFormat.Png);
+
+        }
     }
 }
 

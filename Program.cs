@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using QuestPDF.Infrastructure;
 using SeviceSmartHopitail.Datas;
 using SeviceSmartHopitail.Services;
 using SeviceSmartHopitail.Services.Health;
@@ -11,6 +12,7 @@ using SeviceSmartHopitail.Services.RAG;
 using SeviceSmartHopitail.Services.Remind;
 using System.Security.Claims;
 using System.Text;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -133,7 +135,7 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 });
-
+QuestPDF.Settings.License = LicenseType.Community;
 builder.Services.AddAuthorization();
 var app = builder.Build();
 

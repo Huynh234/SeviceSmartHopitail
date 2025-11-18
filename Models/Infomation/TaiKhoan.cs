@@ -13,6 +13,7 @@ namespace SeviceSmartHopitail.Models.Infomation
         public int Id { get; set; }
 
         [Required, MaxLength(100)]
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
         public string UserName { get; set; } = "";
 
         [Required, MaxLength(100)]

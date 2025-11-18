@@ -18,6 +18,7 @@ namespace SeviceSmartHopitail.Models.Infomation
         public TaiKhoan TaiKhoan { get; set; } = null!;
 
         [MaxLength(100)]
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
         public string? FullName { get; set; }
         public string? AvatarUrl { get; set; }
         public int? Age { get; set; }
@@ -26,6 +27,8 @@ namespace SeviceSmartHopitail.Models.Infomation
         public string? Gender { get; set; }
         public decimal? Height { get; set; }
         public decimal? Weight { get; set; }
+
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
         public string? Address { get; set; }
         public bool Check { get; set; } = false;
 

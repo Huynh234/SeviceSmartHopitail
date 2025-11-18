@@ -82,7 +82,7 @@ namespace SeviceSmartHopitail.Services.Profiles
             var profile = new UserProfile
             {
                 TaiKhoanId = pf.TaiKhoanId,
-                FullName = WebUtility.HtmlEncode(pf.FullName),
+                FullName = pf.FullName,
                 Age = TinhTuoi(pf.Birth),
                 Brith = pf.Birth,
                 Gender = pf.Gender,
@@ -106,7 +106,7 @@ namespace SeviceSmartHopitail.Services.Profiles
 
             // cập nhật từng field
             existing.Age = TinhTuoi(profile.Birth);
-            existing.FullName = WebUtility.HtmlEncode(profile.FullName);
+            existing.FullName = profile.FullName;
             existing.Brith = profile.Birth;
             existing.Gender = profile.Gender;
             existing.PhoneNumber = profile.PhoneNumber;

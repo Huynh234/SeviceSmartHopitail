@@ -24,6 +24,7 @@ namespace SeviceSmartHopitail.Models.Health
 
         public DateTime RecordedAt { get; set; } = DateTime.Now;
 
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
         public string? Note { get; set; }
 
         [NotMapped]

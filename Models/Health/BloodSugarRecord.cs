@@ -18,6 +18,9 @@ namespace SeviceSmartHopitail.Models.Health
 
         [Required]
         public decimal BloodSugar { get; set; } // mg/dL
+
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
+
         public string? Note { get; set; }
         public DateTime RecordedAt { get; set; } = DateTime.Now;
 

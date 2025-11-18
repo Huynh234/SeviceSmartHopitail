@@ -12,8 +12,12 @@ namespace SeviceSmartHopitail.Models.Reminds
 
         [ForeignKey(nameof(TaiKhoan))]
         public int TkId { get; set; }
+
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
         public string? Content { get; set; }
         public decimal? TimeRemind { get; set; }
+
+        [RegularExpression(@"^[\p{L}\d\s'.-]+$", ErrorMessage = "Tên không hợp lệ")]
         public string? Title { get; set; }
         public int loop { get; set; } = 0;
         public string? DayOfWkeek { get; set; }

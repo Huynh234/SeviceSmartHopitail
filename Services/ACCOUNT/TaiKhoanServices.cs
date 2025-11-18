@@ -23,7 +23,6 @@ namespace SeviceSmartHopitail.Services
 
         public (int, string?) Register(string username, string email, string password)
         {
-            string safeUsername = WebUtility.HtmlEncode(username);
             if (_db.TaiKhoans.Any(x => x.Email == email))
             {
                 var tk = _db.TaiKhoans.FirstOrDefault(x => x.Email == email);
@@ -31,7 +30,7 @@ namespace SeviceSmartHopitail.Services
                 {
                     string otp2 = _mailService.GenerateOTP();
                     tk.OtpExpireAt = DateTime.Now.AddMinutes(5);
-                    tk.UserName = safeUsername; // cập nhật tên nếu muốn
+                    tk.UserName = username; // cập nhật tên nếu muốn
                     tk.PasswordHash = _mailService.Hash(password);
                     tk.OtpHash = _mailService.Hash(otp2);
                     tk.LockStatus = true;
@@ -56,7 +55,7 @@ namespace SeviceSmartHopitail.Services
 
             var user = new TaiKhoan
             {
-                UserName = safeUsername,
+                UserName = username,
                 Email = email,
                 PasswordHash = _mailService.Hash(password),
                 OtpHash = otpHash,

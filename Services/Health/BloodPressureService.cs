@@ -235,7 +235,7 @@ namespace SeviceSmartHopitail.Services.Health
                 .OrderBy(r => r.RecordedAt)
                 .ToListAsync();
 
-            if (records.Count < 6) return null;
+            if (records.Count < 5) return null;
 
             var labels = records.Select(r => r.RecordedAt.ToString("dd/MM")).ToList();
             var systolicData = records.Select(r => r.Systolic).ToList();

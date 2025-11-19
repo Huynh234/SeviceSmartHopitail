@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SeviceSmartHopitail.Services.Health;
+using SeviceSmartHopitail.Services.MAIL;
 using UglyToad.PdfPig.Graphics.Operations.PathPainting;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -15,13 +16,15 @@ namespace SeviceSmartHopitail.Controllers
         public readonly BloodPressureService _bp;
         public readonly HeartRateService _hr;
         public readonly SleepService _ss;
-        public ReportController(ReportService rs, BloodSugarService bs, BloodPressureService bp, HeartRateService hr, SleepService ss)
+        public readonly MailServices _ms;
+        public ReportController(ReportService rs, BloodSugarService bs, BloodPressureService bp, HeartRateService hr, SleepService ss, MailServices ms)
         {
             _rs = rs;
             _bs = bs;
             _bp = bp;
             _hr = hr;
             _ss = ss;
+            _ms = ms;
         }
 
         [Authorize(Roles = "user")]
@@ -163,6 +166,37 @@ namespace SeviceSmartHopitail.Controllers
             }
             var pdfBytes = _rs.DrawChart(ss, "Giờ ngủ");
             return File(pdfBytes, "application/png", "SleepChart.png");
+        }
+
+        //[Authorize(Roles = "user")]
+        [HttpGet("share-email/{userProfileId}/{email}")]
+        public async Task<IActionResult> Summary(int userProfileId, string email, [FromQuery] string start, [FromQuery] string end = "")
+        {
+            var enddate = DateTime.Now;
+            if (end != "")
+            {
+                enddate = _rs.ConvertSTD(end);
+            }
+            var startdate = _rs.ConvertSTD(start);
+            var data = await _rs.DataDetail(userProfileId, start, end);
+            var bp = await _bp.GetBloodPressureChartDataAsync(userProfileId, startdate, enddate);
+            var bs = await _bs.GetBloodSugarChartDataAsync(userProfileId, startdate, enddate);
+            var hr = await _hr.GetHeartRateChartDataAsync(userProfileId, startdate, enddate);
+            var ss = await _ss.GetSleepChartDataAsync(userProfileId, startdate, enddate);
+            var pdfBytes1 = _rs.DrawChart(bp, "Huyết áp") ?? null;
+            var pdfBytes2 = _rs.DrawChart(bs, "Đường huyết") ?? null;
+            var pdfBytes3 = _rs.DrawChart(hr, "Nhịp tim") ?? null ;
+            var pdfBytes4 = _rs.DrawChart(ss, "Giờ ngủ") ?? null;
+            var summary = _rs.MergeTableAndChart(data, pdfBytes1, pdfBytes2, pdfBytes3, pdfBytes4);
+            var (s, b) = _ms.SendEmail2(email, "Báo cáo chi tiết", ("Báo cáo ngày" + start + " đến " + end), summary, "bao_cao.pdf");
+            if (b == true)
+            {
+                return Ok(new { message = s });
+            }
+            else
+            {
+                return BadRequest(new { message = s });
+            }
         }
     }
 }

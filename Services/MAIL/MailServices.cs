@@ -40,6 +40,42 @@ namespace SeviceSmartHopitail.Services.MAIL
             }
         }
 
+        public (string,bool) SendEmail2(string toEmail, string subject, string body, byte[] fileBytes, string fileName)
+        {
+            SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential(fromEmail, password),
+                EnableSsl = true
+            };
+
+            MailMessage mail = new MailMessage(fromEmail, toEmail, subject, body);
+
+            // Nếu muốn nội dung email là HTML
+            mail.IsBodyHtml = true;
+
+            // ------------------------------
+            //  ĐÍNH KÈM FILE TỪ BYTE[]
+            // ------------------------------
+            if (fileBytes != null && fileBytes.Length > 0)
+            {
+                var stream = new MemoryStream(fileBytes);
+                var attachment = new Attachment(stream, fileName, "application/pdf"); // <- content type đúng
+                mail.Attachments.Add(attachment);
+            }
+
+
+            try
+            {
+                smtp.Send(mail);
+                return ("Email sent successfully!", true);
+            }
+            catch (Exception ex)
+            {
+                return (("Error: " + ex.Message), false);
+            }
+        }
+
+
         public string GenerateOTP(int length = 6)
         {
             Random rand = new Random();

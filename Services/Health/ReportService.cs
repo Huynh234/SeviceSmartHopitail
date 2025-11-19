@@ -1,11 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuestPDF.Fluent;
-using SeviceSmartHopitail.Datas;
 using ScottPlot;
-using ScottPlot.TickGenerators;
-using System.Drawing;
-using Color = System.Drawing.Color;
-using SkiaSharp;
+using SeviceSmartHopitail.Datas;
 
 namespace SeviceSmartHopitail.Services.Health
 {
@@ -193,8 +189,10 @@ namespace SeviceSmartHopitail.Services.Health
 
         public byte[] DrawChart(object chartData, string name)
         {
-            if (chartData == null)
-                throw new Exception("ChartData is null");
+            if (chartData == null){
+                //throw new Exception("ChartData is null");
+                return null;
+            }
 
             var plt = new Plot();
 
@@ -264,8 +262,87 @@ namespace SeviceSmartHopitail.Services.Health
             // Render to bitmap in memory
             var img = plt.GetImage(1200, 600);
             return img.GetImageBytes(ScottPlot.ImageFormat.Png);
-
         }
+
+        public byte[] MergeTableAndChart( List<object> data, byte[]? chartImage1, byte[]? chartImage2, byte[]? chartImage3, byte[]? chartImage4)
+        {
+            var document = Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Margin(40);
+
+                    page.Header()
+                        .AlignCenter()
+                        .Text("Báo cáo sức khỏe")
+                        .FontSize(20)
+                        .Bold();
+
+                    page.Content().Column(col =>
+                    {
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.ConstantColumn(100);   // Ngày
+                                columns.RelativeColumn();      // Huyết áp
+                                columns.RelativeColumn();      // Nhịp tim
+                                columns.RelativeColumn();      // Đường huyết
+                                columns.RelativeColumn();      // Giấc ngủ
+                                columns.RelativeColumn();      // Ghi chú
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Border(1).Padding(5).Text("Ngày").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Huyết áp").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Nhịp tim").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Đường huyết").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Giấc ngủ").Bold();
+                                header.Cell().Border(1).Padding(5).Text("Ghi chú").Bold();
+                            });
+
+                            foreach (var item in data.Cast<dynamic>())
+                            {
+                                table.Cell().Border(1).Padding(5).Text((string)item.Date);
+                                table.Cell().Border(1).Padding(5).Text((string)item.BloodPressure ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)item.HeartRate ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)item.BloodSugar ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)item.Sleep ?? "---");
+                                table.Cell().Border(1).Padding(5).Text((string)(item.Note ?? "---"));
+                            }
+                        });
+
+                        void AddChart(byte[]? img)
+                        {
+                            if (img != null && img.Length > 0)
+                            {
+                                col.Item().PaddingVertical(20);
+                                col.Item().Image(img);
+                            }
+                        }
+
+                        AddChart(chartImage1);
+                        AddChart(chartImage2);
+                        AddChart(chartImage3);
+                        AddChart(chartImage4);
+                    });
+
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(txt =>
+                        {
+                            txt.Span("Trang ");
+                            txt.CurrentPageNumber();
+                            txt.Span(" / ");
+                            txt.TotalPages();
+                        });
+                });
+            });
+
+            return document.GeneratePdf();
+        }
+
     }
 }
 

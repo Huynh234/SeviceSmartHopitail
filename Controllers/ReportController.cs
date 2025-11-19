@@ -76,7 +76,7 @@ namespace SeviceSmartHopitail.Controllers
 
             var ss = await _ss.GetSleepChartDataAsync(userProfileId, startdate, enddate);
 
-            return Ok(new { BloodPressure = bp, BloodSugar = bs, HeartRate = hr, Sleep = ss , sf = $"Start Date: {startdate}, End Date: {enddate}" });
+            return Ok(new { BloodPressure = bp, BloodSugar = bs, HeartRate = hr, Sleep = ss, sf = $"Start Date: {startdate}, End Date: {enddate}" });
         }
 
         [Authorize(Roles = "user")]
@@ -93,7 +93,10 @@ namespace SeviceSmartHopitail.Controllers
             var startdate = _rs.ConvertSTD(start);
 
             var bp = await _bp.GetBloodPressureChartDataAsync(userProfileId, startdate, enddate);
-
+            if (bp == null)
+            {
+                return NotFound(new { message = "Chưa có dữ liệu huyết áp để tạo biểu đồ." });
+            }
             var pdfBytes = _rs.DrawChart(bp, "Huyết áp");
             return File(pdfBytes, "application/png", "BloodPressureChart.png");
         }
@@ -112,6 +115,10 @@ namespace SeviceSmartHopitail.Controllers
             var startdate = _rs.ConvertSTD(start);
 
             var bs = await _bs.GetBloodSugarChartDataAsync(userProfileId, startdate, enddate);
+            if (bs == null)
+            {
+                return NotFound(new { message = "Chưa có dữ liệu đường huyết để tạo biểu đồ." });
+            }
             var pdfBytes = _rs.DrawChart(bs, "Đường huyết");
             return File(pdfBytes, "application/png", "BloodSugarChart.png");
         }
@@ -129,6 +136,10 @@ namespace SeviceSmartHopitail.Controllers
 
             var startdate = _rs.ConvertSTD(start);
             var hr = await _hr.GetHeartRateChartDataAsync(userProfileId, startdate, enddate);
+            if (hr == null)
+            {
+                return NotFound(new { message = "Chưa có dữ liệu nhịp tim để tạo biểu đồ." });
+            }
             var pdfBytes = _rs.DrawChart(hr, "Nhịp tim");
             return File(pdfBytes, "application/png", "HeartRateChart.png");
         }
@@ -146,6 +157,10 @@ namespace SeviceSmartHopitail.Controllers
 
             var startdate = _rs.ConvertSTD(start);
             var ss = await _ss.GetSleepChartDataAsync(userProfileId, startdate, enddate);
+            if (ss == null)
+            {
+                return NotFound(new { message = "Chưa có dữ liệu giờ ngủ để tạo biểu đồ." });
+            }
             var pdfBytes = _rs.DrawChart(ss, "Giờ ngủ");
             return File(pdfBytes, "application/png", "SleepChart.png");
         }

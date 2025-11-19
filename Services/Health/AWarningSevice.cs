@@ -14,8 +14,7 @@ namespace SeviceSmartHopitail.Services.Health
 
         public async Task<List<AutoWarning>?> getID(int userProfileId)
         {
-            var today = DateTime.Now.Date;
-            var warning = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId && w.CreatedAt.Date == today).ToListAsync();
+            var warning = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId).ToListAsync();
             return warning;
         }
 

@@ -9,7 +9,7 @@ namespace SeviceSmartHopitail.Services.MAIL
 {
     public class MailServices
     {
-        private readonly string fromEmail = "huynhvucomvn5@gmail.com";
+        private readonly string fromEmail = "healthcare2025.work@gmail.com";
         private readonly string password;
 
         public MailServices(IConfiguration configuration)

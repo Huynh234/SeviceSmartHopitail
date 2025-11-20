@@ -46,5 +46,15 @@ namespace SeviceSmartHopitail.Controllers
                 return Ok(new { history = new List<object>() }); 
             return Ok(new {data = history });
         }
+
+        [Authorize]
+        [HttpDelete("History/{logId}/{day}")]
+        public async Task<IActionResult> DeleteHistory(int logId, string day)
+        {
+            var (b,m) = await _qa.DeleteID_Day(logId, day);
+            if (!b)
+                return BadRequest(new { error = m });
+            return Ok(new { message = m });
+        }
     }
 }

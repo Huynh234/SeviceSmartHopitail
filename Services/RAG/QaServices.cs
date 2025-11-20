@@ -115,5 +115,61 @@ namespace SeviceSmartHopitail.Services.RAG
 
             return result;
         }
+
+        public async Task<(bool, string)> DeleteID_Day(int id, string day)
+        {
+            try
+            {
+                var newDate = ConvertSTD(day);
+
+                var start = newDate;                // 00:00:00
+                var end = newDate.Date.AddDays(1);       // ngày hôm sau 00:00:00
+
+                var log = await _db.QuestionLogs
+                    .Where(q => q.TkId == id &&
+                                q.CreatedAt >= start &&
+                                q.CreatedAt < end)
+                    .ToListAsync();
+
+                if (log.Count == 0)
+                {
+                    return (false, "Không có dữ liệu cho id cần xóa " + start + " " + end);
+                }
+
+                _db.QuestionLogs.RemoveRange(log);
+                await _db.SaveChangesAsync();
+
+                return (true, "Xóa thành công");
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+
+        public DateTime ConvertSTD(string day)
+        {
+            if (string.IsNullOrWhiteSpace(day) || day == "\"\"" || day.Equals("null", StringComparison.OrdinalIgnoreCase))
+            {
+                // Nếu không có ngày thì trả về hiện tại
+                return DateTime.Now;
+            }
+
+            // Nếu day là số 7 hoặc 30 → cộng thêm số ngày đó
+            if (day == "7" || day == "30")
+            {
+                return DateTime.Now.AddDays(-(int.Parse(day)));
+            }
+
+            // Nếu không, thử parse theo định dạng ISO hoặc tự động
+            if (DateTime.TryParse(day, null, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsed))
+            {
+                return parsed;
+            }
+
+            // Nếu không parse được, fallback về hiện tại
+            return DateTime.Now;
+        }
     }
 }

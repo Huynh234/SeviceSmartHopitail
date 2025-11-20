@@ -48,7 +48,7 @@ namespace SeviceSmartHopitail.Services.RAG
 
             //5) construct prompt in Vietnamese
             var prompt = new StringBuilder();
-            prompt.AppendLine("Bạn là một trợ lý y tế chuyên tra mã ICD-10. Trả lời bằng tiếng Việt, chính xác, ngắn gọn, thêm 2-3 thông tin chính.");
+            prompt.AppendLine("Bạn là một trợ lý y tế chuyên tra mã ICD-10. Trả lời bằng tiếng Việt, chính xác, ngắn gọn, thêm 2-3 thông tin chính. Nếu câu hỏi không liên quan đến vấn đề sức khỏe trả lời : chưa có dữ liệu liên quan");
             prompt.AppendLine("Nếu trong context có mã ICD, nêu rõ mã và tìm thêm 2-3 thông tin chính cho mã bệnh. Nếu không có thông tin, hãy nói bạn không tìm thấy thông tin và tìm 3-4 thông tin liên quan từ nguồn có kiểm định.");
             prompt.AppendLine();
             prompt.AppendLine("Context (dùng nội dung dưới để trả lời và tìm kiếm thêm một số thông tin từ nguồn kiểm định để bổ sung):");
@@ -63,6 +63,10 @@ namespace SeviceSmartHopitail.Services.RAG
 
             // 6) call LLM for answer
             var answer = await _gemini.GenerateTextAsync(prompt.ToString(), maxTokens: 2000, ct);
+            if (string.IsNullOrWhiteSpace(answer))
+            {
+                answer = "Đã có lỗi trong thao tác xin thao tác lại";
+            }
             // 7) log
             var qlog = new QuestionLog
             { 

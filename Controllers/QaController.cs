@@ -31,6 +31,9 @@ namespace SeviceSmartHopitail.Controllers
 
             string answe = await _qa.Ask(dto, ct);
 
+            if (answe == null)
+                return Ok( new { answer = "Đã có lỗi trong thao tác xin thao tác lại" });
+
             return Ok(new { answer = answe });
         }
 

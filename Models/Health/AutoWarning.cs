@@ -15,11 +15,11 @@ namespace SeviceSmartHopitail.Models.Health
 
         [ForeignKey(nameof(UserProfileId))]
         public UserProfile UserProfile { get; set; } = null!;
-        public string point = "";
-        public string icon = "";
-        public string title = "";
-        public string node = "";
-        public string mess = "";
+        public string point { get; set; } = "";
+        public string icon { get; set; } = "";
+        public string title { get; set; } = "";
+        public string node { get; set; } = "";
+        public string mess { get; set; } = "";
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 

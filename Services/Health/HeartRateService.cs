@@ -107,7 +107,7 @@ namespace SeviceSmartHopitail.Services.Health
                 var warning = new AutoWarning
                 {
                     UserProfileId = model.UserProfileId,
-                    point = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),
+                    point = point,
                     icon = icon,
                     title = title,
                     node = DateTime.Now.ToString("yyyy-MM-dd HH:mm"),

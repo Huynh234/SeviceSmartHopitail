@@ -43,18 +43,28 @@ namespace SeviceSmartHopitail.Services
         }
 
         // Sửa tài khoản
-        //public async Task<bool> UpdateAsync(TaiKhoan model)
-        //{
-        //    var tk = await _db.TaiKhoans.FindAsync(model.Id);
-        //    if (tk == null) return false;
+        public async Task<object> GetOverviewAsync()
+        {
+            var day = DateTime.Now;
+            var month = day.Month;
+            var tomoMonth = (day.AddMonths(-1)).Month;
 
-        //    tk.UserName = model.UserName;
-        //    tk.Email = model.Email;
-        //    tk.Status = model.Status;
+            var total = (await _db.TaiKhoans.ToListAsync()).Count;
+            var active = (await _db.TaiKhoans.Where(t => t.Status == true).ToListAsync()).Count;
+            var lockac = (await _db.TaiKhoans.Where(t => t.LockStatus == false).ToListAsync()).Count;
 
-        //    await _db.SaveChangesAsync();
-        //    return true;
-        //}
+            var newAccThisMonth = (await _db.TaiKhoans
+                .Where(t => t.CreatAt.HasValue && t.CreatAt.Value.Month == month)
+                .ToListAsync()).Count;
+            var newAccTomoMonth = (await _db.TaiKhoans.Where(t => t.CreatAt.HasValue && t.CreatAt.Value.Month == tomoMonth)
+                .ToListAsync()).Count;
+            return new
+            {
+                TotalAccounts = new { title = "Tổng người dùng", tot = total, percent = Math.Round((((double)newAccThisMonth / newAccTomoMonth) * 100 - 100), 2), icon = "pi pi-users" },
+                ActiveAccounts = new { title = "Đang hoạt động", tot = active, percent = 0, icon = "pi pi-info-circle" },
+                LockedAccounts = new {title = "Bị khóa", tot = lockac, percent = 0, icon = "pi pi-ban" }
+            };
+        }
 
         // Xóa tài khoản
         public async Task<bool> DeleteAsync(int id)

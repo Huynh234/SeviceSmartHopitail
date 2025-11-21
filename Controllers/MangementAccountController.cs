@@ -93,5 +93,15 @@ namespace SeviceSmartHopitail.Controllers
                 return Ok(new { message = mess });
             }
         }
+
+        //--- Lấy dữ liệu tổng quan ---
+
+        [Authorize(Roles = "admin")]
+        [HttpGet("overview")]
+        public async Task<IActionResult> GetOverview()
+        {
+            var overview = await _service.GetOverviewAsync();
+            return Ok(overview);
+        }
     }
 }

@@ -19,9 +19,9 @@ namespace SeviceSmartHopitail.Controllers
         // GET: api/warnings/{userProfileId}
         [Authorize(Roles = "user")]
         [HttpGet("{userProfileId:int}")]
-        public async Task<IActionResult> GetWarnings(int userProfileId)
+        public async Task<IActionResult> GetWarnings(int userProfileId, [FromQuery] string? fill = "")
         {
-            var warnings = await _warningService.getID(userProfileId);
+            var warnings = await _warningService.getID(userProfileId, fill);
             if (warnings == null || !warnings.Any())
                 return NotFound(new { message = "Không có cảnh báo nào hôm nay." });
 
@@ -36,8 +36,16 @@ namespace SeviceSmartHopitail.Controllers
             var result = await _warningService.delete(id);
             if (!result)
                 return NotFound(new { message = "Cảnh báo không tồn tại." });
+            return Ok(new { message = "Xóa cảnh báo thành công." });
+        }
 
-            await _warningService.delete(id); // gọi lại SaveChanges trong service
+        [Authorize(Roles = "user")]
+        [HttpDelete("all/{pid:int}")]
+        public async Task<IActionResult> DeleteWarningAll(int pid)
+        {
+            var result = await _warningService.deleteAll(pid);
+            if (!result)
+                return NotFound(new { message = "Cảnh báo không tồn tại." });
             return Ok(new { message = "Xóa cảnh báo thành công." });
         }
     }

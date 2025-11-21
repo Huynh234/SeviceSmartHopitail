@@ -12,10 +12,18 @@ namespace SeviceSmartHopitail.Services.Health
             _db = db;
         }
 
-        public async Task<List<AutoWarning>?> getID(int userProfileId)
+        public async Task<List<AutoWarning>?> getID(int userProfileId, string? fill = "")
         {
-            var warning = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId).ToListAsync();
-            return warning;
+            List<AutoWarning> warningFill = new List<AutoWarning>();
+            if (string.IsNullOrEmpty(fill))
+            {
+                warningFill = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId).ToListAsync();
+            }
+            else
+            {
+                warningFill = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId && w.point.Equals(fill)).ToListAsync();
+            }
+            return warningFill;
         }
 
         public async Task<bool> delete(int id)
@@ -28,6 +36,25 @@ namespace SeviceSmartHopitail.Services.Health
             }
             await _db.SaveChangesAsync();
             return false;
+        }
+
+        public async Task<bool> deleteAll(int id)
+        {
+            try
+            {
+                var li = await _db.AutoWarnings.Where(x => x.UserProfileId == id).ToListAsync();
+                if (li == null)
+                {
+                    return false;
+                }
+                _db.AutoWarnings.RemoveRange(li);
+                await _db.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

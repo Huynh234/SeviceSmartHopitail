@@ -74,8 +74,8 @@ namespace SeviceSmartHopitail.Services.MAIL
                             if (user == null || string.IsNullOrWhiteSpace(user.Email))
                                 continue;
 
-                            string subject = reminder.Title ?? "Nhắc nhở";
-                            string body = reminder.Content ?? "Nhắc nhở định kỳ.";
+                            string subject = "Thông báo nhắc nhở " + (reminder.Content ?? "Nhắc nhở");
+                            string body = "Hãy " + (reminder.Title ?? "Nhắc nhở định kỳ.") + " nào!";
 
                             try
                             {

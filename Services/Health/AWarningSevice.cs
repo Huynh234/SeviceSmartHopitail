@@ -17,11 +17,11 @@ namespace SeviceSmartHopitail.Services.Health
             List<AutoWarning> warningFill = new List<AutoWarning>();
             if (string.IsNullOrEmpty(fill))
             {
-                warningFill = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId).ToListAsync();
+                warningFill = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId).OrderByDescending(x => x.CreatedAt).Take(10).ToListAsync();
             }
             else
             {
-                warningFill = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId && w.point.Equals(fill)).ToListAsync();
+                warningFill = await _db.AutoWarnings.Where(w => w.UserProfileId == userProfileId && w.point.Equals(fill)).OrderByDescending(x => x.CreatedAt).Take(10).ToListAsync();
             }
             return warningFill;
         }
@@ -29,11 +29,11 @@ namespace SeviceSmartHopitail.Services.Health
         public async Task<bool> delete(int id)
         {
             var aw = await _db.AutoWarnings.FirstOrDefaultAsync(x => x.Id == id);
-            if (aw != null)
+            if (aw == null)
             {
-                _db.AutoWarnings.Remove(aw);
-                return true;
+                return false;
             }
+             _db.AutoWarnings.Remove(aw);
             await _db.SaveChangesAsync();
             return false;
         }

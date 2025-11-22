@@ -98,7 +98,7 @@ namespace SeviceSmartHopitail.Services.MAIL
                 }
 
                 // Chờ đến đầu giờ kế tiếp (ví dụ 10:00:05)
-                DateTime nextHour = DateTime.Now.AddHours(1);
+                DateTime nextHour = DateTime.Now.AddMinutes(30);
                 DateTime nextRun = new DateTime(nextHour.Year, nextHour.Month, nextHour.Day, nextHour.Hour, 0, 5);
                 TimeSpan delay = nextRun - DateTime.Now;
 

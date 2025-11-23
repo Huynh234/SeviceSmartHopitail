@@ -93,22 +93,22 @@ namespace SeviceSmartHopitail.Services.Health
             if (model.Systolic > maxSys)
             {
                 message = $"Huyết áp tâm thu {model.Systolic} mmHg vượt ngưỡng tối đa ({maxSys} mmHg).";
-                icon = "arrow-up";
+                icon = "pi-chart-line";
             }
             else if (model.Systolic < minSys)
             {
                 message = $"Huyết áp tâm thu {model.Systolic} mmHg thấp hơn ngưỡng tối thiểu ({minSys} mmHg).";
-                icon = "arrow-down";
+                icon = "pi-chart-scatter";
             }
             else if (model.Diastolic > maxDia)
             {
                 message = $"Huyết áp tâm trương {model.Diastolic} mmHg vượt ngưỡng tối đa ({maxDia} mmHg).";
-                icon = "arrow-up";
+                icon = "pi-chart-line";
             }
             else if (model.Diastolic < minDia)
             {
                 message = $"Huyết áp tâm trương {model.Diastolic} mmHg thấp hơn ngưỡng tối thiểu ({minDia} mmHg).";
-                icon = "arrow-down";
+                icon = "pi-chart-scatter";
             }
 
             // Nếu có cảnh báo thì lưu vào bảng AutoWarning

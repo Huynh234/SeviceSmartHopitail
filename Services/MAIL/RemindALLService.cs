@@ -25,67 +25,68 @@ namespace SeviceSmartHopitail.Services.MAIL
                         var mailService = scope.ServiceProvider.GetRequiredService<MailServices>();
 
                         DateTime now = DateTime.Now;
-                        int currentHour = now.Hour;
-                        DateOnly today = DateOnly.FromDateTime(now);
-                        string currentDay = now.DayOfWeek.ToString(); // "Monday", "Tuesday"...
-
-                        // Lấy các reminder có giờ trùng với giờ hiện tại
                         decimal currentTimeDecimal = now.Hour + (now.Minute / 60m);
+                        DateOnly today = DateOnly.FromDateTime(now);
+                        string currentDay = now.DayOfWeek.ToString().ToLower();
 
-                        // Cho phép sai lệch nhỏ (khoảng ±1 phút = 0.0167 giờ)
+                        // Sai số 3 phút = 0.05 giờ
+                        const decimal timeTolerance = 0.05m;
+
+                        // Lấy tất cả reminder có TimeRemind, rồi lọc tại client
                         var reminders = db.RemindAlls
-                            .Where(r => r.TimeRemind.HasValue &&
-                                        Math.Abs(r.TimeRemind.Value - currentTimeDecimal) < 0.02m)
+                            .Where(r => r.TimeRemind.HasValue)
+                            .ToList()  // EF không hỗ trợ Math.Abs(decimal)
+                            .Where(r => Math.Abs(r.TimeRemind.Value - currentTimeDecimal) <= timeTolerance)
                             .ToList();
 
                         foreach (var reminder in reminders)
                         {
                             bool shouldSend = false;
 
-                            // Nếu có DayOfWkeek → chỉ gửi vào những ngày trong danh sách
-                            if (!string.IsNullOrEmpty(reminder.DayOfWkeek))
+                            // Nếu DayOfWeek có giá trị → chỉ gửi ngày đó
+                            if (!string.IsNullOrWhiteSpace(reminder.DayOfWkeek))
                             {
                                 var allowedDays = reminder.DayOfWkeek
-                                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                    .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
                                     .Select(d => d.ToLower())
                                     .ToList();
 
-                                if (allowedDays.Contains(currentDay.ToLower()))
+                                if (allowedDays.Contains(currentDay))
                                     shouldSend = true;
                             }
                             else
                             {
-                                // Nếu DayOfWkeek rỗng → gửi hàng ngày
+                                // Nếu rỗng → gửi hằng ngày
                                 shouldSend = true;
                             }
 
-                            // Nếu không cần gửi hôm nay → bỏ qua
+                            // Nếu không gửi hôm nay → bỏ qua
                             if (!shouldSend)
                                 continue;
 
-                            // Nếu hôm nay đã gửi rồi → bỏ qua
-                            if (reminder.LastSent.HasValue && DateOnly.FromDateTime(reminder.LastSent.Value) == today)
+                            // Nếu đã gửi hôm nay → bỏ qua
+                            if (reminder.LastSent.HasValue &&
+                                DateOnly.FromDateTime(reminder.LastSent.Value) == today)
                                 continue;
 
-                            // Lấy tài khoản tương ứng
+                            // Lấy tài khoản
                             var user = db.TaiKhoans.FirstOrDefault(u => u.Id == reminder.TkId && u.Status == true);
-                            if (user == null) continue;
+                            if (user == null || string.IsNullOrWhiteSpace(user.Email))
+                                continue;
 
-                            string subject = reminder.Title ?? "Nhắc nhở định kỳ";
-                            string body = reminder.Content ?? "Hãy nhớ chăm sóc sức khỏe mỗi ngày nhé!";
+                            string subject = "Thông báo nhắc nhở " + (reminder.Content ?? "Nhắc nhở");
+                            string body = "Hãy " + (reminder.Title ?? "Nhắc nhở định kỳ.") + " nào!";
 
                             try
                             {
                                 mailService.SendEmail(user.Email, subject, body);
-                                Console.WriteLine($"[RemindALL] Đã gửi email cho {user.Email} ({currentDay}, {currentHour}h)");
-
-                                // Cập nhật ngày gửi cuối cùng
                                 reminder.LastSent = now;
+
                                 db.RemindAlls.Update(reminder);
                             }
                             catch (Exception mailEx)
                             {
-                                Console.WriteLine($"[RemindALL] Lỗi gửi email cho {user.Email}: {mailEx.Message}");
+                                Console.WriteLine($"[RemindALL] Lỗi gửi email: {mailEx.Message}");
                             }
                         }
 
@@ -94,17 +95,12 @@ namespace SeviceSmartHopitail.Services.MAIL
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"[RemindALL] Lỗi khi chạy dịch vụ: {ex.Message}");
+                    Console.WriteLine($"[RemindALL] Lỗi dịch vụ: {ex.Message}");
                 }
 
-                // Chờ đến đầu giờ kế tiếp (ví dụ 10:00:05)
-                DateTime nextHour = DateTime.Now.AddHours(1);
-                DateTime nextRun = new DateTime(nextHour.Year, nextHour.Month, nextHour.Day, nextHour.Hour, 0, 5);
-                TimeSpan delay = nextRun - DateTime.Now;
-
-                await Task.Delay(delay, stoppingToken);
+                // Chờ 5 phút rồi chạy lại
+                await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
             }
         }
     }
 }
-

@@ -123,12 +123,12 @@ namespace SeviceSmartHopitail.Services.Health
             if (hoursSlee > maxSleep)
             {
                 message = $"Giấc ngủ hôm nay dài {hoursSlee}h vượt ngưỡng tối đa ({maxSleep}h).";
-                icon = "arrow-up";
+                icon = "pi-stopwatch";
             }
             else if (hoursSlee < minSleep)
             {
                 message = $"Giấc ngủ hôm nay ngắn {hoursSlee}h thấp hơn ngưỡng tối thiểu ({minSleep}h).";
-                icon = "arrow-down";
+                icon = "pi-moom";
             }
 
             if (message != null)

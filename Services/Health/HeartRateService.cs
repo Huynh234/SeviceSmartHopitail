@@ -94,12 +94,12 @@ namespace SeviceSmartHopitail.Services.Health
             if (model.HeartRate > maxHR)
             {
                 message = $"Nhịp tim {model.HeartRate} bpm vượt ngưỡng tối đa ({maxHR} bpm).";
-                icon = "arrow-up";
+                icon = "pi-heart-fill";
             }
             else if (model.HeartRate < minHR)
             {
                 message = $"Nhịp tim {model.HeartRate} bpm thấp hơn ngưỡng tối thiểu ({minHR} bpm).";
-                icon = "arrow-down";
+                icon = "pi-heart";
             }
 
             if (message != null)

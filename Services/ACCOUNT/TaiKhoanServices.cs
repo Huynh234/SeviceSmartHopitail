@@ -150,12 +150,12 @@ namespace SeviceSmartHopitail.Services
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
-            user.OtpExpireAt = DateTime.Now.AddMinutes(3);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(5);
             _db.SaveChanges();
 
             _mailService.SendEmail(email, "CAPTCHA mới", $"CAPTCHA mới: {otp}\nHết hạn sau 5 phút.");
             Console.WriteLine("OTP mới đã gửi.");
-            return (true, "OTP mới đã gửi.");
+            return (true, "CAPTCHA mới đã gửi.");
         }
 
         // ================== FORGOT PASSWORD ==================
@@ -174,7 +174,7 @@ namespace SeviceSmartHopitail.Services
 
             string otp = _mailService.GenerateCaptcha();
             user.OtpHash = _mailService.Hash(otp);
-            user.OtpExpireAt = DateTime.Now.AddMinutes(3);
+            user.OtpExpireAt = DateTime.Now.AddMinutes(5);
             _db.SaveChanges();
 
             _mailService.SendEmail(email, "Quên mật khẩu", $"Mã CAPTCHA xác thực reset mật khẩu: {otp}\nHết hạn sau 5 phút.");
@@ -195,7 +195,7 @@ namespace SeviceSmartHopitail.Services
             if (user.OtpExpireAt < DateTime.Now)
             {
                 Console.WriteLine("OTP đã hết hạn.");
-                return (false, "OTP đã hết hạn.");
+                return (false, "CAPTCHA đã hết hạn.");
             }
 
             if (user.OtpHash == _mailService.Hash(inputOtp))
@@ -211,7 +211,7 @@ namespace SeviceSmartHopitail.Services
             else
             {
                 Console.WriteLine("OTP không đúng.");
-                return(false, "OTP không đúng");
+                return(false, "CAPTCHA không đúng");
             }
         }
 

@@ -83,12 +83,12 @@ namespace SeviceSmartHopitail.Services.Health
             if (model.BloodSugar > max)
             {
                 message = $"Đường huyết {model.BloodSugar} mg/dL vượt ngưỡng tối đa ({max} mg/dL).";
-                icon = "arrow-up";
+                icon = "pi-wave-pulse";
             }
             else if (model.BloodSugar < min)
             {
                 message = $"Đường huyết {model.BloodSugar} mg/dL thấp hơn ngưỡng tối thiểu ({min} mg/dL).";
-                icon = "arrow-down";
+                icon = "pi-chart-bar";
             }
 
             // Nếu có cảnh báo → lưu vào bảng AutoWarning

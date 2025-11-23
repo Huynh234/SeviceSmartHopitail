@@ -41,7 +41,7 @@ namespace SeviceSmartHopitail.Controllers
             var drinkWaterRemind = await _drinkWaterService.GetByTkIdAsync(tkId);
             if (drinkWaterRemind == null)
             {
-                return NotFound("Remind not found");
+                return NotFound(new {Message = "Chưa có nhắc nhở nào. Hãy thêm nhắc nhở mới để duy trì thói quen tốt"});
             }
             return Ok(new
             {

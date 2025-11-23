@@ -24,7 +24,7 @@ namespace SeviceSmartHopitail.Controllers
         public async Task<IActionResult> GetToday(int userProfileId)
         {
             var result = await _service.GetTodayAsync(userProfileId);
-            if (result == null) return NotFound(new { message = "CẢNH BÁO! HIỆN KHÔNG CÓ DỮ LIỆU HUYẾT ÁP!" });
+            if (result == null) return NotFound(new { message = "Cảnh báo! Hiện không có dữ liệu huyết áp!" });
             return Ok(result);
         }
 
@@ -121,7 +121,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var result = await _service.GetRecentlyAsync(userProfileId);
             if (result == null)
-                return NotFound(new { message = $"CẢNH BÁO! HIỆN KHÔNG CÓ DỮ LIỆU HUYẾT ÁP!" });
+                return NotFound(new { message = $"Cảnh báo! Hiện không có dữ liệu huyết áp!" });
 
             return Ok(result);
         }

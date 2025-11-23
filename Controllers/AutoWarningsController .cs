@@ -23,7 +23,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var warnings = await _warningService.getID(userProfileId, fill);
             if (warnings == null || !warnings.Any())
-                return NotFound(new { message = "Chưa có cảnh báo nào. Hãy duy trì trong độ nhé." });
+                return NotFound(new { message = "Hiện không có cảnh báo sức khỏe nào" });
 
             return Ok(warnings);
         }

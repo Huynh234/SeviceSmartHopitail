@@ -34,7 +34,7 @@ namespace SeviceSmartHopitail.Controllers
             return success ? Ok("Deleted successfully") : NotFound("Remind not found");
         }
 
-        [Authorize(Roles = "user")]
+        // [Authorize(Roles = "user")]
         [HttpGet("all/{tkId}")]
         public async Task<IActionResult> DeleteAllReminds(int tkId)
         {

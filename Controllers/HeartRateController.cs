@@ -24,7 +24,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var result = await _service.GetTodayAsync(userProfileId);
             if (result == null)
-                return NotFound(new { message = "Chưa có dữ liệu nhịp tim hôm nay." });
+                return NotFound(new { message = "CẢNH BÁO! HIỆN KHÔNG CÓ DỮ LIỆU NHỊP TIM!" });
 
             return Ok(result);
         }
@@ -141,7 +141,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var result = await _service.GetRecentlyAsync(userProfileId);
             if (result == null)
-                return NotFound(new { message = $"Không có dữ liệu nhịp tim nào" });
+                return NotFound(new { message = $"CẢNH BÁO! HIỆN KHÔNG CÓ DỮ LIỆU NHỊP TIM!" });
 
             return Ok(result);
         }

@@ -42,7 +42,7 @@ namespace SeviceSmartHopitail.Services.Remind
             var reminders = await _db.RemindAlls
                                     .Where(r => r.TkId == tkId)
                                     .ToListAsync();
-
+            if (reminders == null || reminders.Count == 0) return null;
             var result = reminders
                 .Select(r => (object)new
                 {

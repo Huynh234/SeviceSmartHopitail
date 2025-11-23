@@ -25,7 +25,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var result = await _sleepService.GetTodayAsync(userProfileId);
             if (result == null)
-                return NotFound(new { message = "CẢNH BÁO! HIỆN KHÔNG CÓ DỮ LIỆU GIẤC NGỦ!" });
+                return NotFound(new { message = "Cảnh báo! Hiện không có dữ liệu giấc ngủ!" });
             return Ok(result);
         }
 
@@ -126,7 +126,7 @@ namespace SeviceSmartHopitail.Controllers
         {
             var result = await _sleepService.GetRecentlyAsync(userProfileId);
             if (result == null)
-                return NotFound(new { message = $"CẢNH BÁO! HIỆN KHÔNG CÓ DỮ LIỆU GIẮC NGỦ!" });
+                return NotFound(new { message = $"Cảnh báo! Hiện không có dữ liệu giấc ngủ!" });
 
             return Ok(result);
         }

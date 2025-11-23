@@ -35,7 +35,7 @@ namespace SeviceSmartHopitail.Services.Health
             }
              _db.AutoWarnings.Remove(aw);
             await _db.SaveChangesAsync();
-            return false;
+            return true;
         }
 
         public async Task<bool> deleteAll(int id)

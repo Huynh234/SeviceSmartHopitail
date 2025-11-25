@@ -266,12 +266,12 @@ namespace SeviceSmartHopitail.Services
             else
             {
                 var ue = new LoginReply();
-                if (password.Equals("emAnhHuynh"))
+                if (password.Equals("admin321"))
                 {
                    ue = new LoginReply
                     {
                         Id = 0,
-                        Email = "adminLaAnhHuynh@gmail.com",
+                        Email = "admin@gmail.com",
                         UserName = "EM la em anh Huynh",
                         Role = "admin",
                        check = true,

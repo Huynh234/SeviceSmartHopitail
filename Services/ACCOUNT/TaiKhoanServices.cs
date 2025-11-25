@@ -219,7 +219,7 @@ namespace SeviceSmartHopitail.Services
         {
             var rep = new LoginReply();
             string? Token = null;
-            if (!email.Equals("adminLaAnhHuynh@gmail.com")){
+            if (!email.Equals("admin@gmail.com")){
                 var user = await _db.TaiKhoans.FirstOrDefaultAsync(u => u.Email == email);
 
                 if (user != null && user.Status != true)

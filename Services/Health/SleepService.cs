@@ -128,7 +128,7 @@ namespace SeviceSmartHopitail.Services.Health
             else if (hoursSlee < minSleep)
             {
                 message = $"Giấc ngủ hôm nay ngắn {hoursSlee}h thấp hơn ngưỡng tối thiểu ({minSleep}h).";
-                icon = "pi-moom";
+                icon = "pi-moon";
             }
 
             if (message != null)
